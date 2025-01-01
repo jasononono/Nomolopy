@@ -66,9 +66,6 @@ def updateWindow(location):
     global players_label, players_tokenImg, players_name, players_openfile, players_token
     global tiles_bd, tiles_obj, tiles_frame, tiles_label, mainDisplay
 
-    if location == 'board' and not retrievePlayers():
-        return
-
     title.place_forget()
     subtitle.place_forget()
     m_play.place_forget()
@@ -104,7 +101,7 @@ def updateWindow(location):
         scr.config(bg=BLUE0)
         players_token = []
         for i in range(len(players_name)):
-            img = transitionImg
+            img = defaultToken
             if players_tokenImg[i] != '':
                 img = players_tokenImg[i]
             players_token.append(Label(scr, image = img))
@@ -131,22 +128,23 @@ def updateWindow(location):
         mainDisplay.place(anchor=CENTER, x=400, y=520)
 
 def updateAnimation(location, direction):
-    global LOCATION
+    global LOCATION, transition, scr
 
-    transition.place(x=800 * direction, y=0)
-    for i in range(15):
-        current = int(transition.place_info().get('x'))
-        spd = (15 - (255 - i ** 2) ** 0.5) * direction
-        transition.place(x=current - 20 * spd, y=0)
-        scr.update()
-    updateWindow(location)
-    for i in range(15, 30):
-        current = int(transition.place_info().get('x'))
-        spd = (15 - (i * 60 - i ** 2 - 675) ** 0.5) * direction
-        transition.place(x=current - 20 * spd, y=0)
-        scr.update()
-    LOCATION = location
-
+    if location != 'board' or retrievePlayers():
+        transition.place(x=800 * direction, y=0)
+        for i in range(15):
+            current = int(transition.place_info().get('x'))
+            spd = (15 - (255 - i ** 2) ** 0.5) * direction
+            transition.place(x=current - 20 * spd, y=0)
+            scr.update()
+        updateWindow(location)
+        for i in range(15, 30):
+            current = int(transition.place_info().get('x'))
+            spd = (15 - (i * 60 - i ** 2 - 675) ** 0.5) * direction
+            transition.place(x=current - 20 * spd, y=0)
+            scr.update()
+        transition.place_forget()
+        LOCATION = location
 
 def moveToken(token, start, end):
     return
@@ -226,5 +224,10 @@ transitionImg = Image.open('transition.png')
 transitionImg = transitionImg.resize([800, 800])
 transitionImg = ImageTk.PhotoImage(transitionImg)
 transition = Label(scr, image=transitionImg, bd=0)
+
+defaultToken = Image.open('transition.png')
+defaultToken = defaultToken.resize([10, 10])
+defaultToken = ImageTk.PhotoImage(defaultToken)
+
 
 #################### MAINLOOP ####################
