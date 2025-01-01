@@ -160,11 +160,19 @@ class Player:
                 self.owned_properties.append(space)
 
     def drawChance(self):
+        global players
         print("You landed on chance!")
         draw_card = random.randint(1, 16)
-        if draw_card == 1:
-            self.move((39-self.position)%40)
-            self.spaceAction()
+        if draw_card <= 7:
+            if draw_card == 1:
+                self.move((39-self.position)%40)
+            elif draw_card == 2:
+                self.move((0-self.position)%40)
+            elif draw_card == 3:
+                self.move((0-self.position)%40)
+            elif draw_card == 4:
+                self.move((0-self.position)%40)
+            self.spaceAction(self.position, players=players)
 
     def drawCommunityChest(self):
         print("Chest")
