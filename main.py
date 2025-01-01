@@ -9,6 +9,7 @@ def setup():
     num_players, player_names= gui.getPlayers()
     for i in range(num_players):
           players.append(Player(player_names[i]))
+          players[-1].guiPos = gui.moveToken(i, None, None)
 
 def turn(player):
     global property_name
@@ -23,6 +24,7 @@ def turn(player):
         print(f"You rolled a {roll}.")
         player.move(roll)
         print(f"You landed on {property_name[player.position]}.")
+        player.guiPos = gui.moveToken(player_turn, player.guiPos, player.position)
         player.spaceAction(player.position, players)
     player.purchaseBuildings()
 

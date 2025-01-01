@@ -2,6 +2,7 @@
 
 
 from tkinter import *
+from random import *
 from tkinter import filedialog
 from PIL import ImageTk, Image
 import sys
@@ -47,7 +48,7 @@ def importFile(p):
     path = filedialog.askopenfilename(title = 'select token', filetypes = [("Png Files", "*.png")])
     if path:
         img = Image.open(rf'{path}')
-        img = img.resize([100, 100])
+        img = img.resize([10, 10])
         img = ImageTk.PhotoImage(img)
 
 def retrievePlayers():
@@ -60,6 +61,9 @@ def retrievePlayers():
         players_name = p
         return True
     return False
+
+def scatter(principle):
+    return principle + randint(-20, 20)
 
 def updateWindow(location):
     global scr, title, subtitle, m_play
@@ -104,8 +108,7 @@ def updateWindow(location):
             img = defaultToken
             if players_tokenImg[i] != '':
                 img = players_tokenImg[i]
-            players_token.append(Label(scr, image = img))
-            players_token[-1].place(anchor = CENTER, x = 400, y = 400)
+            players_token.append(Label(scr, bd = 0, image = img))
         title.place(anchor=CENTER, x=400, y=380)
         subtitle.place(anchor=CENTER, x=400, y=450)
         for i in range(40):
@@ -147,7 +150,28 @@ def updateAnimation(location, direction):
         LOCATION = location
 
 def moveToken(token, start, end):
-    return
+    global players_token, scr
+    
+    if start is None:
+        pos = [scatter(52) for _ in range(2)]
+        players_token[token].place(anchor = CENTER, x = pos[0], y = pos[1])
+        scr.update()
+    else:
+        mod, rem = end % 10, end // 10
+        if mod == 0:
+            pos = [52, 52, 748, 748, 52]
+        else:
+            pos = [52, 66 * mod + 70, 748, 730 - 66 * mod, 52]
+        pos = [scatter(pos[rem + 1]), scatter(pos[rem])]
+        
+        SPEED = 100
+        spd = [(pos[0] - start[0]) / SPEED, (pos[1] - start[1]) / SPEED]
+        currentPos = start.copy()
+        for i in range(SPEED):
+            players_token[token].place(anchor = CENTER, x = currentPos[0] + spd[0], y = currentPos[1] + spd[1])
+            currentPos = [currentPos[0] + spd[0], currentPos[1] + spd[1]]
+            scr.update()
+    return pos
 
 def getPlayers():
     return len(players_name), players_name
@@ -225,8 +249,8 @@ transitionImg = transitionImg.resize([800, 800])
 transitionImg = ImageTk.PhotoImage(transitionImg)
 transition = Label(scr, image=transitionImg, bd=0)
 
-defaultToken = Image.open('transition.png')
-defaultToken = defaultToken.resize([10, 10])
+defaultToken = Image.open('token1.png')
+defaultToken = defaultToken.resize([35, 35])
 defaultToken = ImageTk.PhotoImage(defaultToken)
 
 
