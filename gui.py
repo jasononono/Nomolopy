@@ -43,13 +43,19 @@ LOCATION = 'menu'
 #################### FUNCTIONS ####################
 
 
+def tokenSizing(w, h):
+    scale = max(w, h) / 40
+    return round(w / scale), round(h / scale)
+
 def importFile(p):
     global players_tokenImg
+    
     path = filedialog.askopenfilename(title = 'select token', filetypes = [("Png Files", "*.png")])
     if path:
         img = Image.open(rf'{path}')
-        img = img.resize([10, 10])
+        img = img.resize(tokenSizing(img.width, img.height))
         img = ImageTk.PhotoImage(img)
+        players_tokenImg[p] = img
 
 def retrievePlayers():
     global players_name
@@ -250,7 +256,7 @@ transitionImg = ImageTk.PhotoImage(transitionImg)
 transition = Label(scr, image=transitionImg, bd=0)
 
 defaultToken = Image.open('token1.png')
-defaultToken = defaultToken.resize([35, 35])
+defaultToken = defaultToken.resize(tokenSizing(defaultToken.width, defaultToken.height))
 defaultToken = ImageTk.PhotoImage(defaultToken)
 
 
