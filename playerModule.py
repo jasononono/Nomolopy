@@ -13,6 +13,7 @@ class Player:
     def __init__(self, name):
         self.player_name = name
         self.position = 0
+        self.guiPos = None
         self.money = 1500
         self.owned_properties = []
         self.has_set = False
