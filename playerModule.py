@@ -17,6 +17,7 @@ class Player:
         self.owned_properties = []
         self.has_set = False
         self.sets = []
+        self.jail_free_card = False
         self.loop = True
 
     def rollDice(self, past_roll, double_count):
@@ -158,8 +159,11 @@ class Player:
                 self.owned_properties.append(space)
 
     def drawChance(self):
-        print("GAMBLINGGG!!!")
-        pass
+        print("You landed on chance!")
+        draw_card = random.randint(1, 16)
+        if draw_card == 1:
+            self.move((39-self.position)%40)
+            self.spaceAction()
 
     def drawCommunityChest(self):
         print("Chest")
