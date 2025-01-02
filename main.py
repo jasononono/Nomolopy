@@ -1,7 +1,6 @@
 from data import *
-from playerModule import Player, gui, player_turn
+from playerModule import Player, gui, player_turn, players
 
-players = []
 
 def setup():
     global players
