@@ -2,6 +2,7 @@ import random
 from data import *
 import gui
 
+player_turn = 0
 community_chest_spaces = (2, 17, 33)
 chance_spaces = (7, 22, 36)
 railroads = (5, 15, 25, 35)
@@ -56,13 +57,6 @@ class Player:
     def goToJail(self):
         self.position = 40
         gui.moveToken(self.player_num, self.guiPos, 40)
-        # UI import
-        if input("Do you want to pay $50 to get out of jail? (y/n) ").lower() == "y":  # placeholder
-            if self.money >= 50:
-                self.money -= 50
-            else:
-                if self.mortgageOrSell(50) == 1:
-                    self.position = 10
 
     def mortgageOrSell(self, amount):
         #UI import
@@ -115,6 +109,14 @@ class Player:
             self.money -= 100
         elif space in null_space or space in self.owned_properties:
             pass
+        elif space == 40:
+            # UI import
+            if input("Do you want to pay $50 to get out of jail? (y/n) ").lower() == "y":  # placeholder
+                if self.money >= 50:
+                    self.money -= 50
+                else:
+                    if self.mortgageOrSell(50) == 1:
+                        self.position = 10
         elif property_owner[space] != -1:
             if space in railroads:
                 railroad_count = 0
@@ -163,20 +165,50 @@ class Player:
                 self.owned_properties.append(space)
 
     def drawChance(self):
-        global players
+        global players, property_owner
         print("You landed on chance!")
         draw_card = random.randint(1, 16)
         if draw_card <= 7:
             if draw_card == 1:
-                self.move((39-self.position)%40)
+                #reading railroad
+                self.move((5-self.position)%40)
             elif draw_card == 2:
-                self.move((0-self.position)%40)
+                #st. charles
+                self.move((11-self.position)%40)
             elif draw_card == 3:
-                self.move((0-self.position)%40)
+                #illinois
+                self.move((24-self.position)%40)
             elif draw_card == 4:
-                self.move((0-self.position)%40)
-            #self.spaceAction(self.position, players=players)
-
+                #boardwalk
+                self.move((39-self.position)%40)
+            elif draw_card == 5 or draw_card == 6:
+                #nearest railroad
+                self.position -= self.position % 5
+                if self.position%10 == self.position%5:
+                    self.position += 5
+                if property_owner[self.position] != -1 and property_owner[self.position] != self.player_num:
+                    gui.msg("You pay double!")
+                    self.spaceAction(self.position, players=players)
+            elif draw_card == 7:
+                #nearest utility
+                if self.position < 28:
+                    self.move((28-self.position)%40)
+                elif self.position < 12:
+                    self.move((12-self.position)%40)
+                else:
+                    self.move((28-self.position)%40)
+                if property_owner[self.position] != -1 and property_owner[self.position] != self.player_num:
+                    gui.msg("You pay double!")
+                    self.spaceAction(self.position, players=players)
+            elif draw_card == 8:
+                #GO
+                self.position = 0
+            elif draw_card == 9:
+                #jail
+                self.goToJail()
+            self.guiPos = gui.moveToken(player_turn, self.guiPos, self.position)
+            gui.msg(f"{self.player_name} landed on {property_name[self.position]}.")
+            self.spaceAction(self.position, players=players)
     def drawCommunityChest(self):
         print("Chest")
         pass

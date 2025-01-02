@@ -1,5 +1,5 @@
 from data import *
-from playerModule import Player, gui
+from playerModule import Player, gui, player_turn
 
 players = []
 
@@ -24,7 +24,7 @@ def turn(player):
         player.move(roll)
         player.guiPos = gui.moveToken(player_turn, player.guiPos, player.position)
         gui.msg(f"{player.player_name} landed on {property_name[player.position]}.")
-        player.spaceAction(player.position, players)
+    player.spaceAction(player.position, players)
     player.purchaseBuildings()
 
 gui.updateWindow('menu')
@@ -32,7 +32,6 @@ while gui.LOCATION != 'board':
      gui.scr.update()
 
 setup()
-player_turn = 0
 while len(players) > 1:
      gui.scr.update()
      turn(players[player_turn])
