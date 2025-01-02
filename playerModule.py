@@ -52,7 +52,7 @@ class Player:
         self.position = (self.position + num) % 40
         if self.position - num < 0:
             self.money += 200
-            print("You passed go. Collect $200.")
+            gui.msg("You passed go. Collect $200.")
 
     def goToJail(self):
         self.position = 40
@@ -147,9 +147,8 @@ class Player:
                     print(f"You paid {str(rent)} to {property_name[property_owner[space]]}.")
         else:
             price = property_purchase_price[space]
-            query = input(
-                f"Would you like to buy {property_name[space]} for ${price}? You currently have ${self.money} (y/n) ")
-            if query.lower() == 'y':
+            query = gui.popup(f"Would {self.player_name} like to buy {property_name[space]} for ${price}?\n{self.player_name} currently have ${self.money}", ['YES', 'NO'])
+            if query == 'YES':
                 if self.money >= price:
                     self.money -= price
                 else:
