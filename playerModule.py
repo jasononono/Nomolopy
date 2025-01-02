@@ -1,5 +1,6 @@
 import random
 from data import *
+import gui
 
 community_chest_spaces = (2, 17, 33)
 chance_spaces = (7, 22, 36)
@@ -10,8 +11,9 @@ null_space = (0, 10, 20)
 
 class Player:
 
-    def __init__(self, name):
+    def __init__(self, name, num):
         self.player_name = name
+        self.player_num = num
         self.position = 0
         self.guiPos = None
         self.money = 1500
@@ -53,6 +55,7 @@ class Player:
 
     def goToJail(self):
         self.position = 40
+        gui.moveToken(self.player_num, self.guiPos, 40)
         # UI import
         if input("Do you want to pay $50 to get out of jail? (y/n) ").lower() == "y":  # placeholder
             if self.money >= 50:
@@ -172,7 +175,7 @@ class Player:
                 self.move((0-self.position)%40)
             elif draw_card == 4:
                 self.move((0-self.position)%40)
-            self.spaceAction(self.position, players=players)
+            #self.spaceAction(self.position, players=players)
 
     def drawCommunityChest(self):
         print("Chest")

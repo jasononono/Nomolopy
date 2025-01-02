@@ -5,7 +5,7 @@ from tkinter import *
 from random import *
 from tkinter import filedialog
 from PIL import ImageTk, Image
-import sys
+import sys, time
 
 #################### COLOUR PALETTE ####################
 
@@ -74,7 +74,7 @@ def scatter(principle):
 def updateWindow(location):
     global scr, title, subtitle, m_play
     global players_label, players_tokenImg, players_name, players_openfile, players_token
-    global tiles_bd, tiles_obj, tiles_frame, tiles_label, mainDisplay
+    global tiles_bd, tiles_obj, tiles_frame, tiles_label, mainDialogue
 
     title.place_forget()
     subtitle.place_forget()
@@ -91,7 +91,7 @@ def updateWindow(location):
         tiles_obj[i].place_forget()
         tiles_frame[i].place_forget()
         tiles_label[i].pack_forget()
-    mainDisplay.place_forget()
+    mainDialogue.place_forget()
 
     if location == 'menu':
         scr.config(bg=BLUE1)
@@ -134,7 +134,7 @@ def updateWindow(location):
         tiles_frame[-1].place(anchor=CENTER, x=600, y=200)
         tiles_label[-1].pack()
 
-        mainDisplay.place(anchor=CENTER, x=400, y=520)
+        mainDialogue.place(anchor=CENTER, x=400, y=520)
 
 def updateAnimation(location, direction):
     global LOCATION, transition, scr
@@ -168,7 +168,11 @@ def moveToken(token, start, end):
             pos = [52, 52, 748, 748, 52]
         else:
             pos = [52, 66 * mod + 70, 748, 730 - 66 * mod, 52]
-        pos = [scatter(pos[rem + 1]), scatter(pos[rem])]
+
+        if end == 40:
+            pos = [scatter(600), scatter(200)]
+        else:
+            pos = [scatter(pos[rem + 1]), scatter(pos[rem])]
         
         SPEED = 100
         spd = [(pos[0] - start[0]) / SPEED, (pos[1] - start[1]) / SPEED]
@@ -181,6 +185,12 @@ def moveToken(token, start, end):
 
 def getPlayers():
     return len(players_name), players_name
+
+def msg(m):
+    global mainDialogue
+    mainDialogue.config(text = m)
+    scr.update()
+    time.sleep(1)
 
 
 #################### TK ####################
@@ -245,7 +255,7 @@ tiles_label.append(Label(tiles_frame[-1], bg=BLUE1, fg=tiles_colour[-1], text=ti
 
 ### dialogue ###
 
-mainDisplay = Label(scr, bg=BLUE0, fg=BLUE2, text='Crane has been fined $9127436802!!!!\noops', font='optima 30')
+mainDialogue = Label(scr, bg=BLUE0, fg=BLUE2, text='', font='optima 30')
 
 #################### OTHER STUFF ####################
 
