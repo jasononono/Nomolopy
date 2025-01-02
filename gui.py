@@ -114,7 +114,7 @@ def updateWindow(location):
             img = defaultToken
             if players_tokenImg[i] != '':
                 img = players_tokenImg[i]
-            players_token.append(Label(scr, bd = 0, image = img))
+            players_token.append(Label(scr, bd = 2, bg = players_colour[i], image = img))
         title.place(anchor=CENTER, x=400, y=380)
         subtitle.place(anchor=CENTER, x=400, y=450)
         for i in range(40):
@@ -192,6 +192,29 @@ def msg(m):
     scr.update()
     time.sleep(1)
 
+def alterAns(ans):
+    global queryAns
+    queryAns = ans
+
+
+def popup(msg, options = ['OK']):
+    global scr, queryAns
+
+    queryAns = None
+    window = Tk()
+    window.geometry('600x200')
+    window.title('Query')
+    Label(window, text = msg, font = 'optima 20').place(anchor = CENTER, x = 300, y = 50)
+    f = Frame(window)
+    f.pack(side = BOTTOM, pady = 20)
+    for i in options:
+        Button(f, text = i, height = 2, command = lambda x = i: alterAns(x)).pack(side = RIGHT)
+    while queryAns is None:
+        scr.update()
+        window.update()
+    window.destroy()
+    return queryAns
+
 
 #################### TK ####################
 
@@ -218,9 +241,10 @@ players_name = [StringVar(scr, '') for i in range(5)]
 players_label = []
 players_openfile = []
 players_tokenImg = [''] * 5
+players_colour = [RED, GREEN, BLUE, YELLOW, PINK] 
 players_token = []
 for i in range(5):
-    players_label.append(Entry(scr, width=10, textvariable=players_name[i], font='optima 50 italic bold'))
+    players_label.append(Entry(scr, width=10, fg = players_colour[i], textvariable=players_name[i], font='optima 50 italic bold'))
     players_openfile.append(Button(scr, text = 'Token', command = lambda x = i: importFile(x)))
 
 s_play = Button(scr, bg=BLUE1, fg=BLUE2, text='PLAY', font='aharoni 60', command=lambda: updateAnimation('board', 1))
@@ -253,9 +277,10 @@ tiles_obj.append(Frame(scr, bg=BLUE1, width=146, height=146))
 tiles_frame.append(Frame(scr, bg=BLUE1, width=146, height=146))
 tiles_label.append(Label(tiles_frame[-1], bg=BLUE1, fg=tiles_colour[-1], text=tiles_name[-1], font='aharoni 30 bold'))
 
-### dialogue ###
+### dialogue & query ###
 
 mainDialogue = Label(scr, bg=BLUE0, fg=BLUE2, text='', font='optima 30')
+queryAns = None
 
 #################### OTHER STUFF ####################
 
