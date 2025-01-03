@@ -56,6 +56,7 @@ class Player:
         if self.position - num < 0:
             self.money += 200
             gui.msg(f"{self.player_name} passed go and collected $200.")
+        self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
 
     def goToJail(self):
         self.position = 40
@@ -222,7 +223,6 @@ class Player:
             elif draw_card == 10:
                 #go back 3 spaces
                 self.move(-3)
-            self.guiPos = gui.moveToken(player_turn, self.guiPos, self.position)
             gui.msg(f"{self.player_name} landed on {property_name[self.position]}.")
             self.spaceAction(self.position, players=players)
         elif draw_card == 11:

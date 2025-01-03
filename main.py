@@ -21,7 +21,6 @@ def turn(player):
     if roll != None:
         gui.msg(f"{player.player_name} rolled a {roll}.")
         player.move(roll)
-        player.guiPos = gui.moveToken(player_turn, player.guiPos, player.position)
         gui.msg(f"{player.player_name} landed on {property_name[player.position]}.")
     player.spaceAction(player.position, players)
     player.purchaseBuildings()
