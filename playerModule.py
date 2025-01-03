@@ -198,6 +198,7 @@ class Player:
                     self.position += 5
                 self.position -= self.position % 10
                 self.position += 5
+                self.position %= 40
                 if property_owner[self.position] != -1 and property_owner[self.position] != self.player_num:
                     gui.msg(f"{self.player_name} paid double!")
                     self.spaceAction(self.position, players=players)
