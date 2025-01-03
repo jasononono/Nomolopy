@@ -69,7 +69,7 @@ class Player:
         for property in self.owned_properties:
             str += f"{property_name.index(property)}. {property_name[property]} - {property_state[property]} houses\n"
         print(str)
-        if gui.popup(f"{self.player_name}, you don't have enough money to pay for this. \nWould you like to mortgage your properties?") == "NO":
+        if gui.popup(f"{self.player_name}, you don't have enough money to pay for this. \nWould you like to mortgage your properties?", ["YES", "NO"]) == "NO":
             return -1
         while True:
             mortgage = self.owned_properties[int(input("Which properties would you like to mortgage?")) - 1]
@@ -93,7 +93,7 @@ class Player:
                 return 1
             if len(self.owned_properties) < 1:
                 return -1
-            if gui.popup("Do you want to continue selling properties?") == "NO":
+            if gui.popup("Do you want to continue selling properties?", ["YES", "NO"]) == "NO":
                 return -1
 
 
@@ -118,9 +118,9 @@ class Player:
             pass
         elif space == 40:
             if self.jail_free_card:
-                query = gui.popup("You have a get out of jail free card. Do you want to use it?")
+                query = gui.popup("You have a get out of jail free card. Do you want to use it?", ["YES", "NO"])
             else:
-                query = gui.popup("Do you want to pay $50 to get out of jail?")
+                query = gui.popup("Do you want to pay $50 to get out of jail?", ["YES", "NO"])
             if query == "YES":  # placeholder
                 if self.jail_free_card:
                     self.jail_free_card == False
@@ -406,7 +406,7 @@ class Player:
                 if self.mortgageOrSell(cost - self.money) == 1:
                     self.money -= cost
                     property_state[purchase_location] += 1
-            if gui.popup("Do you want to continue purchasing buildings?") == "YES":
+            if gui.popup("Do you want to continue purchasing buildings?", ["YES","NO"]) == "YES":
                 self.purchaseBuildings()
             else:
                 return
