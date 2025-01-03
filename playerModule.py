@@ -62,12 +62,13 @@ class Player:
         gui.moveToken(self.player_num, self.guiPos, 40)
 
     def mortgageOrSell(self, amount):
+        global property_state, property_name
         #UI import
         str = ""
         for property in self.owned_properties:
             str += f"{property_name.index(property)}. {property_name[property]} - {property_state[property]} houses\n"
         print(str)
-        if gui.popup("You don't have enough money to pay for this. Would you like to mortgage your properties? (y/n) ") == "NO":
+        if gui.popup(f"{self.player_name}, you don't have enough money to pay for this. \nWould you like to mortgage your properties?") == "NO":
             return -1
         while True:
             mortgage = self.owned_properties[int(input("Which properties would you like to mortgage?")) - 1]
@@ -80,18 +81,18 @@ class Player:
                     self.money += 75
                 else:
                     self.money += 100
-                print(f"You sold a building and now have ${self.money}.")
+                gui.msg(f"{self.player_name} sold a building on {property_name[mortgage]} and now have ${self.money}.")
             else:
                 self.money += property_purchase_price[mortgage]/2
-                print(f"You sold {property_name[mortgage]} and now have ${self.money}.")
-            print(f"The amount required is ${amount}.")
+                gui.msg(f"{self.player_name} sold {property_name[mortgage]} and now have ${self.money}.")
+            gui.msg(f"The amount required is ${amount}.")
             property_state[mortgage] -= 1
             if self.money >= amount:
                 self.money -= amount
                 return 1
             if len(self.owned_properties) < 1:
                 return -1
-            if input("Do you want to continue selling properties? (y/n) ").lower() == "n":
+            if gui.popup("Do you want to continue selling properties?") == "NO":
                 return -1
 
 
@@ -151,7 +152,6 @@ class Player:
                 gui.msg(f"{self.player_name} paid ${str(rent)} to {players[property_owner[space]].player_name}.")
             else:
                 if self.mortgageOrSell(rent - self.money) == -1:
-                    gui.msg(f"{self.player_name} has been bankrupted!")
                     self.bankrupt()
                 else:
                     self.money -= rent
@@ -176,7 +176,6 @@ class Player:
 
     def drawChance(self):
         global players, property_owner
-        print("You landed on chance!")
         draw_card = random.randint(1, 16)
         if draw_card <= 10:
             if draw_card == 1:
@@ -246,7 +245,6 @@ class Player:
                 if self.mortgageOrSell(15) == 1:
                     self.money -= 15
                 else:
-                    gui.msg(f"{self.player_name} has been bankrupted!")
                     self.bankrupt()
                     return
         elif draw_card == 15:
@@ -259,7 +257,6 @@ class Player:
                 if self.mortgageOrSell(cost) == 1:
                     self.money -= cost
                 else:
-                    gui.msg(f"{self.player_name} has been bankrupted!")
                     self.bankrupt()
                     return
             for i in range(len(players)):
@@ -274,13 +271,90 @@ class Player:
                 if self.mortgageOrSell(cost) == 1:
                     self.money -= cost
                 else:
-                    gui.msg(f"{self.player_name} has been bankrupted!")
                     self.bankrupt()
                     return
 
     def drawCommunityChest(self):
-        print("Chest")
-        pass
+        global players
+        draw_card = random.randint(1, 16)
+        if draw_card <= 2:
+            if draw_card == 1:
+                #GO
+                gui.msg(f"{self.player_name} advanced to Go.")
+                self.position = 0
+            elif draw_card == 2:
+                #jail
+                gui.msg(f"{self.player_name} went to jail.")
+                self.goToJail()
+        elif draw_card == 3:
+            gui.msg(f"{self.player_name} won second prize in a beauty contest. \nCollect $10.")
+            self.money += 10
+        elif draw_card == 4:
+            gui.msg(f"{self.player_name} received and income tax refund of $20.")
+            self.money += 20
+        elif draw_card == 5:
+            gui.msg(f"{self.player_name} received a $25 consultancy fee.")
+            self.money += 25
+        elif draw_card == 6:
+            gui.msg(f"{self.player_name} received $50 from stocks.")
+            self.money += 50
+        elif draw_card == 7:
+            gui.msg(f"{self.player_name} inherited $100.")
+            self.money += 100
+        elif draw_card == 8:
+            gui.msg(f"{self.player_name}'s holiday fund matured. \nCollect $100.")
+            self.money += 100
+        elif draw_card == 9:
+            gui.msg(f"{self.player_name}'s life insurance matured. \nCollect $100.")
+            self.money += 100
+        elif draw_card == 10:
+            gui.msg(f"{self.player_name} experienced a favourable bank error. \nCollect $200.")
+            self.money += 200
+        elif draw_card <= 13:
+            if draw_card == 11:
+                gui.msg(f"{self.player_name} needs to pay school fees. \nPay $50.")
+                cost = 50
+            elif draw_card == 12:
+                gui.msg(f"{self.player_name} needs to pay doctor's fees. \nPay $50.")
+                cost = 50
+            elif draw_card == 13:
+                gui.msg(f"{self.player_name} needs to pay hospital fees. \nPay $100.")
+                cost = 100
+            if self.money >= cost:
+                self.money -= cost
+            else:
+                if self.mortgageOrSell(cost) == 1:
+                    self.money -= cost
+                else:
+                    self.bankrupt()
+                    return
+        elif draw_card == 14:
+            gui.msg(f"It's {self.player_name}'s birthday! Every player pays them $10.")
+            for player in players:
+                if player != self:
+                    if player.money >= 10:
+                        player.money -= 10
+                    else:
+                        if player.mortgageOrSell(10) == 1:
+                            player.money -= 10
+                        else:
+                            player.bankrupt()
+                            return
+            self.money += (len(players)-1)*10
+        elif draw_card == 15:
+            gui.msg(f"{self.player_name} got a get out of jail free card.")
+            self.jail_free_card = True
+        else:
+            cost, houses, hotels = self.buildingRepairs(40, 115)
+            gui.msg(f"Street repairs! {self.player_name} has to pay ${cost} for {houses} houses and {hotels} hotels.")
+            if self.money >= cost:
+                self.money -= cost
+            else:
+                if self.mortgageOrSell(cost) == 1:
+                    self.money -= cost
+                else:
+                    self.bankrupt()
+                    return
 
     def buildingRepairs(self, house_p, hotel_p):
         total_cost = 0
@@ -341,6 +415,7 @@ class Player:
 
     def bankrupt(self):
         global players, property_state
+        gui.msg(f"{self.player_name} has been bankrupted!")
         players[players.index(self)] = None
         for property in self.owned_properties:
             property_state[property] = -2
