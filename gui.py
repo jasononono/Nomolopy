@@ -5,7 +5,7 @@ from tkinter import *
 from random import *
 from tkinter import filedialog
 from PIL import ImageTk, Image
-import sys
+import sys, time
 
 #################### COLOUR PALETTE ####################
 
@@ -43,13 +43,19 @@ LOCATION = 'menu'
 #################### FUNCTIONS ####################
 
 
+def tokenSizing(w, h):
+    scale = max(w, h) / 40
+    return round(w / scale), round(h / scale)
+
 def importFile(p):
     global players_tokenImg
+    
     path = filedialog.askopenfilename(title = 'select token', filetypes = [("Png Files", "*.png")])
     if path:
         img = Image.open(rf'{path}')
-        img = img.resize([10, 10])
+        img = img.resize(tokenSizing(img.width, img.height))
         img = ImageTk.PhotoImage(img)
+        players_tokenImg[p] = img
 
 def retrievePlayers():
     global players_name
@@ -68,7 +74,7 @@ def scatter(principle):
 def updateWindow(location):
     global scr, title, subtitle, m_play
     global players_label, players_tokenImg, players_name, players_openfile, players_token
-    global tiles_bd, tiles_obj, tiles_frame, tiles_label, mainDisplay
+    global tiles_bd, tiles_obj, tiles_frame, tiles_label, mainDialogue
 
     title.place_forget()
     subtitle.place_forget()
@@ -85,7 +91,7 @@ def updateWindow(location):
         tiles_obj[i].place_forget()
         tiles_frame[i].place_forget()
         tiles_label[i].pack_forget()
-    mainDisplay.place_forget()
+    mainDialogue.place_forget()
 
     if location == 'menu':
         scr.config(bg=BLUE1)
@@ -108,7 +114,7 @@ def updateWindow(location):
             img = defaultToken
             if players_tokenImg[i] != '':
                 img = players_tokenImg[i]
-            players_token.append(Label(scr, bd = 0, image = img))
+            players_token.append(Label(scr, bd = 2, bg = players_colour[i], image = img))
         title.place(anchor=CENTER, x=400, y=380)
         subtitle.place(anchor=CENTER, x=400, y=450)
         for i in range(40):
@@ -128,7 +134,7 @@ def updateWindow(location):
         tiles_frame[-1].place(anchor=CENTER, x=600, y=200)
         tiles_label[-1].pack()
 
-        mainDisplay.place(anchor=CENTER, x=400, y=520)
+        mainDialogue.place(anchor=CENTER, x=400, y=520)
 
 def updateAnimation(location, direction):
     global LOCATION, transition, scr
@@ -151,7 +157,6 @@ def updateAnimation(location, direction):
 
 def moveToken(token, start, end):
     global players_token, scr
-    
     if start is None:
         pos = [scatter(52) for _ in range(2)]
         players_token[token].place(anchor = CENTER, x = pos[0], y = pos[1])
@@ -162,7 +167,11 @@ def moveToken(token, start, end):
             pos = [52, 52, 748, 748, 52]
         else:
             pos = [52, 66 * mod + 70, 748, 730 - 66 * mod, 52]
-        pos = [scatter(pos[rem + 1]), scatter(pos[rem])]
+
+        if end == 40:
+            pos = [scatter(600), scatter(200)]
+        else:
+            pos = [scatter(pos[rem + 1]), scatter(pos[rem])]
         
         SPEED = 100
         spd = [(pos[0] - start[0]) / SPEED, (pos[1] - start[1]) / SPEED]
@@ -175,6 +184,35 @@ def moveToken(token, start, end):
 
 def getPlayers():
     return len(players_name), players_name
+
+def msg(m):
+    global mainDialogue
+    mainDialogue.config(text = m)
+    scr.update()
+    time.sleep(1)
+
+def alterAns(ans):
+    global queryAns
+    queryAns = ans
+
+
+def popup(msg, options = ['OK']):
+    global scr, queryAns
+
+    queryAns = None
+    window = Tk()
+    window.geometry('600x200')
+    window.title('Query')
+    Label(window, text = msg, font = 'optima 20').place(anchor = CENTER, x = 300, y = 50)
+    f = Frame(window)
+    f.pack(side = BOTTOM, pady = 20)
+    for i in options:
+        Button(f, text = i, height = 2, command = lambda x = i: alterAns(x)).pack(side = RIGHT)
+    while queryAns is None:
+        scr.update()
+        window.update()
+    window.destroy()
+    return queryAns
 
 
 #################### TK ####################
@@ -202,9 +240,10 @@ players_name = [StringVar(scr, '') for i in range(5)]
 players_label = []
 players_openfile = []
 players_tokenImg = [''] * 5
+players_colour = [RED, GREEN, BLUE, YELLOW, PINK] 
 players_token = []
 for i in range(5):
-    players_label.append(Entry(scr, width=10, textvariable=players_name[i], font='optima 50 italic bold'))
+    players_label.append(Entry(scr, width=10, fg = players_colour[i], textvariable=players_name[i], font='optima 50 italic bold'))
     players_openfile.append(Button(scr, text = 'Token', command = lambda x = i: importFile(x)))
 
 s_play = Button(scr, bg=BLUE1, fg=BLUE2, text='PLAY', font='aharoni 60', command=lambda: updateAnimation('board', 1))
@@ -237,9 +276,10 @@ tiles_obj.append(Frame(scr, bg=BLUE1, width=146, height=146))
 tiles_frame.append(Frame(scr, bg=BLUE1, width=146, height=146))
 tiles_label.append(Label(tiles_frame[-1], bg=BLUE1, fg=tiles_colour[-1], text=tiles_name[-1], font='aharoni 30 bold'))
 
-### dialogue ###
+### dialogue & query ###
 
-mainDisplay = Label(scr, bg=BLUE0, fg=BLUE2, text='Crane has been fined $9127436802!!!!\noops', font='optima 30')
+mainDialogue = Label(scr, bg=BLUE0, fg=BLUE2, text='', font='optima 30')
+queryAns = None
 
 #################### OTHER STUFF ####################
 
@@ -250,7 +290,7 @@ transitionImg = ImageTk.PhotoImage(transitionImg)
 transition = Label(scr, image=transitionImg, bd=0)
 
 defaultToken = Image.open('token1.png')
-defaultToken = defaultToken.resize([35, 35])
+defaultToken = defaultToken.resize(tokenSizing(defaultToken.width, defaultToken.height))
 defaultToken = ImageTk.PhotoImage(defaultToken)
 
 
