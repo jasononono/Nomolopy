@@ -51,6 +51,8 @@ class Player:
 
     def move(self, num):
         self.position = (self.position + num) % 40
+        if num < 0:
+            return
         if self.position - num < 0:
             self.money += 200
             gui.msg(f"{self.player_name} passed go and collected $200.")
@@ -113,8 +115,14 @@ class Player:
         elif space in null_space or space in self.owned_properties:
             pass
         elif space == 40:
-            if gui.popup("Do you want to pay $50 to get out of jail?") == "YES":  # placeholder
-                if self.money >= 50:
+            if self.jail_free_card:
+                query = gui.popup("You have a get out of jail free card. Do you want to use it?")
+            else:
+                query = gui.popup("Do you want to pay $50 to get out of jail?")
+            if query == "YES":  # placeholder
+                if self.jail_free_card:
+                    self.jail_free_card == False
+                elif self.money >= 50:
                     self.money -= 50
                 else:
                     if self.mortgageOrSell(50) == 1:
@@ -143,6 +151,7 @@ class Player:
                 gui.msg(f"{self.player_name} paid ${str(rent)} to {players[property_owner[space]].player_name}.")
             else:
                 if self.mortgageOrSell(rent - self.money) == -1:
+                    gui.msg(f"{self.player_name} has been bankrupted!")
                     self.bankrupt()
                 else:
                     self.money -= rent
@@ -159,8 +168,7 @@ class Player:
                     else:
                         gui.msg("You don't have enough money to buy this property.")
                         return
-                gui.msg(f"{self.player_name} has bought {property_name[space]} for ${price}. ")
-                gui.msg(f"{self.player_name} now has ${self.money}.")
+                gui.msg(f"{self.player_name} has bought {property_name[space]} for ${price}. \n{self.player_name} now has ${self.money}.")
                 property_owner[space] = players.index(self)
                 print(f"Property has been transferred to player {players.index(self)}")
                 property_state[space] = 0
@@ -170,7 +178,7 @@ class Player:
         global players, property_owner
         print("You landed on chance!")
         draw_card = random.randint(1, 16)
-        if draw_card <= 7:
+        if draw_card <= 10:
             if draw_card == 1:
                 #reading railroad
                 self.move((5-self.position)%40)
@@ -212,12 +220,80 @@ class Player:
                 #jail
                 gui.msg(f"{self.player_name} went to jail.")
                 self.goToJail()
+            elif draw_card == 10:
+                #go back 3 spaces
+                self.move(-3)
             self.guiPos = gui.moveToken(player_turn, self.guiPos, self.position)
             gui.msg(f"{self.player_name} landed on {property_name[self.position]}.")
             self.spaceAction(self.position, players=players)
+        elif draw_card == 11:
+            #get out of jail free card
+            gui.msg(f"{self.player_name} got a get out of jail free card.")
+            self.jail_free_card = True
+        elif draw_card == 12:
+            #building loan
+            gui.msg(f"{self.player_name}'s building loan matured. \n{self.player_name} collected $150.")
+            self.money += 150
+        elif draw_card == 13:
+            #dividends
+            gui.msg(f"The bank paid {self.player_name} a dividend of $50.")
+            self.money += 50
+        elif draw_card == 14:
+            gui.msg(f"Speeding fine! {self.player_name} was charged $15.")
+            if self.money >= 15:
+                self.money -= 15
+            else:
+                if self.mortgageOrSell(15) == 1:
+                    self.money -= 15
+                else:
+                    gui.msg(f"{self.player_name} has been bankrupted!")
+                    self.bankrupt()
+                    return
+        elif draw_card == 15:
+            #chairman
+            gui.msg(f"{self.player_name} has been elected chairman of the board. \n{self.player_name} has to pay each player $50.")
+            cost = 50*len(players)
+            if self.money >= cost:
+                self.money -= cost
+            else:
+                if self.mortgageOrSell(cost) == 1:
+                    self.money -= cost
+                else:
+                    gui.msg(f"{self.player_name} has been bankrupted!")
+                    self.bankrupt()
+                    return
+            for i in range(len(players)):
+                if i != self.player_num:
+                    players[i].money += 50
+        else:
+            cost, houses, hotels = self.buildingRepairs(25, 100)
+            gui.msg(f"General repairs! {self.player_name} has to pay ${cost} for {houses} houses and {hotels} hotels.")
+            if self.money >= cost:
+                self.money -= cost
+            else:
+                if self.mortgageOrSell(cost) == 1:
+                    self.money -= cost
+                else:
+                    gui.msg(f"{self.player_name} has been bankrupted!")
+                    self.bankrupt()
+                    return
+
     def drawCommunityChest(self):
         print("Chest")
         pass
+
+    def buildingRepairs(self, house_p, hotel_p):
+        total_cost = 0
+        house_count = 0
+        hotel_count = 0
+        for property in self.owned_properties:
+            if property_state[property] == 5:
+                total_cost += hotel_p
+                hotel_count += 1
+            elif property_state[property] > 0:
+                total_cost += property_state[property]*house_p
+                house_count += property_state[property]
+        return total_cost, house_count, hotel_count
 
     def purchaseBuildings(self):
         global property_state, color_sets
