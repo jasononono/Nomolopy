@@ -34,7 +34,6 @@ class Player:
         if dice1 == dice2:
             if self.position == 40:
                 self.position = 10
-                return roll
             else:
                 double_count += 1
                 if double_count >= 3:
@@ -47,6 +46,9 @@ class Player:
             print("Stay in jail")
             return None
         print("Rolled")
+        gui.msg(f"{self.player_name} rolled a {roll}.")
+        self.move(roll)
+        gui.msg(f"{self.player_name} landed on {property_name[self.position]}.")
         return roll
 
     def move(self, num):
@@ -186,15 +188,19 @@ class Player:
         if draw_card <= 10:
             if draw_card == 1:
                 #reading railroad
+                gui.msg(f"{self.player_name} advanced to Writing Railroad.")
                 self.move((5-self.position)%40)
             elif draw_card == 2:
                 #st. charles
+                gui.msg(f"{self.player_name} advanced to St. Nicholas Place.")
                 self.move((11-self.position)%40)
             elif draw_card == 3:
                 #illinois
+                gui.msg(f"{self.player_name} advanced to Healthinois Avenue.")
                 self.move((24-self.position)%40)
             elif draw_card == 4:
                 #boardwalk
+                gui.msg(f"{self.player_name} advanced to Plankrun.")
                 self.move((39-self.position)%40)
             elif draw_card == 5 or draw_card == 6:
                 #nearest railroad
@@ -231,6 +237,7 @@ class Player:
                 self.goToJail()
             elif draw_card == 10:
                 #go back 3 spaces
+                gui.msg(f"{self.player_name} went back three spaces.")
                 self.move(-3)
                 self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
             gui.msg(f"{self.player_name} landed on {property_name[self.position]}.")

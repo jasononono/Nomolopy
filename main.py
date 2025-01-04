@@ -17,10 +17,6 @@ def turn(player):
     if player.position == 40:
         gui.msg("You are in jail.")
     roll = player.rollDice(0, 0)
-    if roll != None:
-        gui.msg(f"{player.player_name} rolled a {roll}.")
-        player.move(roll)
-        gui.msg(f"{player.player_name} landed on {property_name[player.position]}.")
     player.spaceAction(player.position, players)
     player.purchaseBuildings()
 
