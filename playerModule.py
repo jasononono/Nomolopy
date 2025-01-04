@@ -60,7 +60,7 @@ class Player:
 
     def goToJail(self):
         self.position = 40
-        gui.moveToken(self.player_num, self.guiPos, 40)
+        self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
 
     def mortgageOrSell(self, amount):
         global property_state, property_name
@@ -217,7 +217,6 @@ class Player:
                     self.move((28-self.position)%40)
                 else:
                     self.move((28-self.position)%40)
-                self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
                 if property_owner[self.position] != -1 and property_owner[self.position] != self.player_num:
                     gui.msg(f"{self.player_name} paid double!")
                     self.spaceAction(self.position, players=players)
@@ -225,6 +224,7 @@ class Player:
                 #GO
                 gui.msg(f"{self.player_name} advanced to Go.")
                 self.position = 0
+                self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
             elif draw_card == 9:
                 #jail
                 gui.msg(f"{self.player_name} went to jail.")
@@ -232,6 +232,7 @@ class Player:
             elif draw_card == 10:
                 #go back 3 spaces
                 self.move(-3)
+                self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
             gui.msg(f"{self.player_name} landed on {property_name[self.position]}.")
             self.spaceAction(self.position, players=players)
         elif draw_card == 11:
@@ -291,6 +292,7 @@ class Player:
                 #GO
                 gui.msg(f"{self.player_name} advanced to Go.")
                 self.position = 0
+                self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
             elif draw_card == 2:
                 #jail
                 gui.msg(f"{self.player_name} went to jail.")
