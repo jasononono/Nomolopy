@@ -2,6 +2,7 @@
 
 
 from tkinter import *
+from tkinter import messagebox
 from random import *
 from tkinter import filedialog
 from PIL import ImageTk, Image
@@ -73,8 +74,8 @@ def scatter(principle):
 
 def updateWindow(location):
     global scr, title, subtitle, m_play
-    global players_label, players_tokenImg, players_name, players_openfile, players_token
-    global tiles_bd, tiles_obj, tiles_frame, tiles_label, mainDialogue
+    global players_label, players_tokenImg, players_name, players_openfile, players_token, players_dashboard
+    global tiles_bd, tiles_obj, tiles_frame, tiles_label, mainDialogue, dashboardButton
 
     title.place_forget()
     subtitle.place_forget()
@@ -92,6 +93,8 @@ def updateWindow(location):
         tiles_frame[i].place_forget()
         tiles_label[i].pack_forget()
     mainDialogue.place_forget()
+    openDashboard(False)
+    dashboardButton.place_forget()
 
     if location == 'menu':
         scr.config(bg=BLUE1)
@@ -135,6 +138,7 @@ def updateWindow(location):
         tiles_label[-1].pack()
 
         mainDialogue.place(anchor=CENTER, x=400, y=520)
+        dashboardButton.place(anchor = CENTER, x = 230, y = 660)
 
 def updateAnimation(location, direction):
     global LOCATION, transition, scr
@@ -157,6 +161,7 @@ def updateAnimation(location, direction):
 
 def moveToken(token, start, end):
     global players_token, scr
+    
     if start is None:
         pos = [scatter(52) for _ in range(2)]
         players_token[token].place(anchor = CENTER, x = pos[0], y = pos[1])
@@ -180,6 +185,7 @@ def moveToken(token, start, end):
             players_token[token].place(anchor = CENTER, x = currentPos[0] + spd[0], y = currentPos[1] + spd[1])
             currentPos = [currentPos[0] + spd[0], currentPos[1] + spd[1]]
             scr.update()
+
     return pos
 
 def getPlayers():
@@ -188,8 +194,8 @@ def getPlayers():
 def msg(m):
     global mainDialogue
     mainDialogue.config(text = m)
-    scr.update()
-    time.sleep(1)
+    for i in range(20000):
+        scr.update()
 
 def alterAns(ans):
     global queryAns
@@ -214,6 +220,27 @@ def popup(msg, options = ['OK']):
     window.destroy()
     return queryAns
 
+def openDashboard(fixedState = None):
+    global players_dashboard
+    state = False
+    if fixedState == True or (fixedState is not False and len(players_dashboard) == 0):
+        state = True
+        
+    for i in players_dashboard:
+        i.destroy()
+    players_dashboard = []
+    if state:
+        for i, j in enumerate(players_name):
+            players_dashboard.append(Tk())
+            players_dashboard[-1].geometry('300x400')
+            players_dashboard[-1].title(f'Player {i + 1} - {j}')
+
+def exitProgram():
+    query = messagebox.askyesno('Caution!', 'Are you sure you want to exit the program?\nYour game\'s progress will be lost.')
+    if query:
+        scr.destroy()
+        exit()
+
 
 #################### TK ####################
 
@@ -221,6 +248,7 @@ def popup(msg, options = ['OK']):
 scr = Tk()
 scr.geometry('800x800')
 scr.title(' NOMOLOPY ')
+scr.protocol('WM_DELETE_WINDOW', exitProgram)
 #################### MAIN MENU ####################
 
 
@@ -281,17 +309,18 @@ tiles_label.append(Label(tiles_frame[-1], bg=BLUE1, fg=tiles_colour[-1], text=ti
 mainDialogue = Label(scr, bg=BLUE0, fg=BLUE2, text='', font='optima 30')
 queryAns = None
 
-#################### OTHER STUFF ####################
+### dashboards ###
 
+players_dashboard = []
+dashboardButton = Button(scr, text = 'Dashboards', font = 'optima 30', command = openDashboard)
+
+#################### OTHER STUFF ####################
 
 transitionImg = Image.open('transition.png')
 transitionImg = transitionImg.resize([800, 800])
-transitionImg = ImageTk.PhotoImage(transitionImg)
+transitionImg =    ImageTk.PhotoImage(transitionImg)
 transition = Label(scr, image=transitionImg, bd=0)
 
 defaultToken = Image.open('token1.png')
 defaultToken = defaultToken.resize(tokenSizing(defaultToken.width, defaultToken.height))
 defaultToken = ImageTk.PhotoImage(defaultToken)
-
-
-#################### MAINLOOP ####################
