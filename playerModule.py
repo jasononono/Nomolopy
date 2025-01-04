@@ -112,7 +112,7 @@ class Player:
             gui.msg(f"{self.player_name} paid $200.")
             self.money -= 200
         elif space == 38:
-            gui.msg(f"{self.player_name} paid $200.")
+            gui.msg(f"{self.player_name} paid $100.")
             self.money -= 100
         elif space in null_space or space in self.owned_properties:
             pass
@@ -121,14 +121,19 @@ class Player:
                 query = gui.popup("You have a get out of jail free card. Do you want to use it?", ["YES", "NO"])
             else:
                 query = gui.popup("Do you want to pay $50 to get out of jail?", ["YES", "NO"])
-            if query == "YES":  # placeholder
+            if query == "YES":
                 if self.jail_free_card:
                     self.jail_free_card == False
                 elif self.money >= 50:
                     self.money -= 50
                 else:
-                    if self.mortgageOrSell(50) == 1:
-                        self.position = 10
+                    if self.mortgageOrSell(50) == -1:
+                        gui.msg(f"{self.player_name} stayed in jail.")
+                        return
+                self.position = 10
+                self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
+            else:
+                gui.msg(f"{self.player_name} stayed in jail.")
         elif property_owner[space] != -1:
             if space in railroads:
                 railroad_count = 0
@@ -194,22 +199,25 @@ class Player:
             elif draw_card == 5 or draw_card == 6:
                 #nearest railroad
                 gui.msg(f"{self.player_name} advanced to the nearest railroad.")
-                if (self.position % 10 + 5) < (self.position):
+                if (self.position - (self.position % 10) + 5) < (self.position):
                     self.position += 5
                 self.position -= self.position % 10
                 self.position += 5
                 self.position %= 40
+                self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
                 if property_owner[self.position] != -1 and property_owner[self.position] != self.player_num:
                     gui.msg(f"{self.player_name} paid double!")
                     self.spaceAction(self.position, players=players)
             elif draw_card == 7:
                 #nearest utility
-                if self.position < 28:
-                    self.move((28-self.position)%40)
-                elif self.position < 12:
+                gui.msg(f"{self.player_name} advanced to the nearest utility.")
+                if self.position < 12:
                     self.move((12-self.position)%40)
+                elif self.position < 28:
+                    self.move((28-self.position)%40)
                 else:
                     self.move((28-self.position)%40)
+                self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
                 if property_owner[self.position] != -1 and property_owner[self.position] != self.player_num:
                     gui.msg(f"{self.player_name} paid double!")
                     self.spaceAction(self.position, players=players)

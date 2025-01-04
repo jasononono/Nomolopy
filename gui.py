@@ -195,14 +195,28 @@ def alterAns(ans):
     global queryAns
     queryAns = ans
 
+def center(win): #center a window
+    win.update_idletasks()
+    width = win.winfo_width()
+    frm_width = win.winfo_rootx() - win.winfo_x()
+    win_width = width + 2 * frm_width
+    height = win.winfo_height()
+    titlebar_height = win.winfo_rooty() - win.winfo_y()
+    win_height = height + titlebar_height + frm_width
+    x = win.winfo_screenwidth() // 2 - win_width // 2
+    y = win.winfo_screenheight() // 2 - win_height // 2
+    win.geometry('{}x{}+{}+{}'.format(width, height, x, y))
+    win.deiconify()
 
 def popup(msg, options = ['OK']):
     global scr, queryAns
 
     queryAns = None
     window = Tk()
-    window.geometry('600x200')
     window.title('Query')
+    # window.geometry('{}x{}+{}+{}'.format(600, 200, 0, 0))
+    window.geometry('600x200')
+    center(window)
     Label(window, text = msg, font = 'optima 20').place(anchor = CENTER, x = 300, y = 50)
     f = Frame(window)
     f.pack(side = BOTTOM, pady = 20)
@@ -220,6 +234,7 @@ def popup(msg, options = ['OK']):
 
 scr = Tk()
 scr.geometry('800x800')
+center(scr)
 scr.title(' NOMOLOPY ')
 #################### MAIN MENU ####################
 
