@@ -3,6 +3,7 @@
 
 from tkinter import *
 from tkinter import messagebox
+from tkinter import colorchooser
 from random import *
 from tkinter import filedialog
 from PIL import ImageTk, Image
@@ -58,6 +59,13 @@ def importFile(p):
         img = ImageTk.PhotoImage(img)
         players_tokenImg[p] = img
 
+def changePlayerColor(p):
+    global scr, players_color
+    new_color = colorchooser.askcolor(title= "Change Player Color")[1]
+    players_color[p] = new_color
+    players_label[p].config(fg=new_color)
+    scr.update()
+
 def retrievePlayers():
     global players_name
     p = []
@@ -107,6 +115,7 @@ def updateWindow(location):
         for i in range(5):
             players_label[i].grid(row=i, column=0)
             players_openfile[i].grid(row = i, column = 1)
+            players_selectcolor[i].grid(row = i, column = 2)
 
         s_play.place(anchor=CENTER, x=400, y=500)
 
@@ -117,7 +126,7 @@ def updateWindow(location):
             img = defaultToken
             if players_tokenImg[i] != '':
                 img = players_tokenImg[i]
-            players_token.append(Label(scr, bd = 2, bg = players_colour[i], image = img))
+            players_token.append(Label(scr, bd = 2, bg = players_color[i], image = img))
         title.place(anchor=CENTER, x=400, y=380)
         subtitle.place(anchor=CENTER, x=400, y=450)
         for i in range(40):
@@ -282,12 +291,14 @@ m_play = Button(scr, bg=BLUE1, fg=BLUE2, text='PLAY', font='aharoni 60', command
 players_name = [StringVar(scr, '') for i in range(5)]
 players_label = []
 players_openfile = []
+players_selectcolor = []
 players_tokenImg = [''] * 5
-players_colour = [RED, GREEN, BLUE, YELLOW, PINK] 
+players_color = [RED, GREEN, BLUE, YELLOW, PINK]
 players_token = []
 for i in range(5):
-    players_label.append(Entry(scr, width=10, fg = players_colour[i], textvariable=players_name[i], font='optima 50 italic bold'))
-    players_openfile.append(Button(scr, text = 'Token', command = lambda x = i: importFile(x)))
+    players_label.append(Entry(scr, width=10, fg = players_color[i], textvariable=players_name[i], font='optima 50 italic bold'))
+    players_openfile.append(Button(scr, text = 'Import token', command = lambda x = i: importFile(x)))
+    players_selectcolor.append(Button(scr, text = 'Change color', command = lambda x = i: changePlayerColor(x)))
 
 s_play = Button(scr, bg=BLUE1, fg=BLUE2, text='PLAY', font='aharoni 60', command=lambda: updateAnimation('board', 1))
 

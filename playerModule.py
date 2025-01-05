@@ -134,6 +134,7 @@ class Player:
                         return
                 self.position = 10
                 self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
+                return "Out of jail"
             else:
                 gui.msg(f"{self.player_name} stayed in jail.")
         elif property_owner[space] != -1:
@@ -229,7 +230,7 @@ class Player:
             elif draw_card == 8:
                 #GO
                 gui.msg(f"{self.player_name} advanced to Go.")
-                self.position = 0
+                self.move(40 - self.position)
                 self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
             elif draw_card == 9:
                 #jail

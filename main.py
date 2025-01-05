@@ -17,7 +17,8 @@ def turn(player):
     if player.position == 40:
         gui.msg("You are in jail.")
     roll = player.rollDice(0, 0)
-    player.spaceAction(player.position, players)
+    if player.spaceAction(player.position, players) == "Out of jail":
+        turn(player)
     player.purchaseBuildings()
 
 gui.updateWindow('menu')
