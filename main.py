@@ -8,6 +8,7 @@ def setup():
     for i in range(num_players):
           players.append(Player(player_names[i], i))
           players[-1].guiPos = gui.moveToken(i, None, None)
+          gui.updateDashboard(i, 'GO', players[-1].money, [], False)
 
 def turn(player):
     global property_name
@@ -19,6 +20,7 @@ def turn(player):
     roll = player.rollDice(0, 0)
     if player.spaceAction(player.position, players) == "Out of jail":
         turn(player)
+    gui.updateDashboard(player.player_num, money = player.money)
     player.purchaseBuildings()
 
 gui.updateWindow('menu')

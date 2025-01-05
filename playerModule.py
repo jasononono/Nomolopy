@@ -59,10 +59,12 @@ class Player:
             self.money += 200
             gui.msg(f"{self.player_name} passed go and collected $200.")
         self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
+        gui.updateDashboard(self.player_num, pos = property_name[self.position])
 
     def goToJail(self):
         self.position = 40
         self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
+        gui.updateDashboard(self.player_num, pos = property_name[self.position])
 
     def mortgageOrSell(self, amount):
         global property_state, property_name

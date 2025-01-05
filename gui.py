@@ -82,7 +82,7 @@ def scatter(principle):
 
 def updateWindow(location):
     global scr, title, subtitle, m_play
-    global players_label, players_tokenImg, players_name, players_openfile, players_token, players_dashboard
+    global players_label, players_tokenImg, players_name, players_openfile, players_token, players_dashboard, players_selectcolor
     global tiles_bd, tiles_obj, tiles_frame, tiles_label, mainDialogue, dashboardButton
 
     title.place_forget()
@@ -92,6 +92,7 @@ def updateWindow(location):
     for i in range(5):
         players_label[i].grid_forget()
         players_openfile[i].grid_forget()
+        players_selectcolor[i].grid_forget()
 
     s_play.place_forget()
 
@@ -257,12 +258,39 @@ def openDashboard(fixedState = None):
             players_dashboard.append(Tk())
             players_dashboard[-1].geometry('300x400')
             players_dashboard[-1].title(f'Player {i + 1} - {j}')
+            players_dashboard[-1].config(bg = BLUE1, padx = 2, pady = 2)
+    for i in range(len(players_dashboard)):
+        packDashboard(i)
 
 def exitProgram():
     query = messagebox.askyesno('Caution!', 'Are you sure you want to exit the program?\nYour game\'s progress will be lost.')
     if query:
         scr.destroy()
         exit()
+
+def updateDashboard(num = None, pos = None, money = None, properties = None, jailCard = None):
+    global players_info
+
+    if pos is not None:
+        players_info[num][0] = pos
+    if money is not None:
+        players_info[num][1] = money
+    if properties is not None:
+        players_info[num][2] = properties
+    if jailCard is not None:
+        players_info[num][3] = jailCard
+        
+    if len(players_dashboard) > 0:
+        packDashboard(num)
+
+def packDashboard(num):
+    global players_dashboard
+    for widget in players_dashboard[num].winfo_children():
+        widget.destroy()
+    Label(players_dashboard[num], font = 'optima 30', fg = BLUE1, bg = BLUE0, text = f'                    💵 {players_info[num][1]}                    ').pack(padx = 2, pady = 2)
+    Label(players_dashboard[num], font = 'optima 20', fg = BLUE1, bg = BLUE0, text = f'                         📍{players_info[num][0]}                         ').pack(padx = 2, pady = 2)
+    #f = Frame(players_dashboard[num], bg = BLUE0).pack(padx = 2, pady = 2)
+    #Label(f, font = 'aharoni 25', fg = BLUE1, bg = BLUE0, text = 'PROPERTIES').pack(padx = 2, pady = 2)
 
 
 #################### TK ####################
@@ -295,6 +323,7 @@ players_selectcolor = []
 players_tokenImg = [''] * 5
 players_color = [RED, GREEN, BLUE, YELLOW, PINK]
 players_token = []
+players_info = [[None] * 5 for i in range(5)]
 for i in range(5):
     players_label.append(Entry(scr, width=10, fg = players_color[i], textvariable=players_name[i], font='optima 50 italic bold'))
     players_openfile.append(Button(scr, text = 'Import token', command = lambda x = i: importFile(x)))
