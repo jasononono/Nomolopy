@@ -20,8 +20,9 @@ def turn(player):
     roll = player.rollDice(0, 0)
     if player.spaceAction(player.position, players) == "Out of jail":
         turn(player)
-    gui.updateDashboard(player.player_num, money = player.money)
+    gui.updateDashboard(player.player_num, money = player.money, properties = player.owned_properties, sets = player.sets)
     player.purchaseBuildings()
+    print(player.sets)
 
 gui.updateWindow('menu')
 while gui.LOCATION != 'board':

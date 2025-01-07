@@ -8,6 +8,7 @@ from random import *
 from tkinter import filedialog
 from PIL import ImageTk, Image
 import sys, time
+from data import *
 
 #################### COLOUR PALETTE ####################
 
@@ -268,7 +269,7 @@ def exitProgram():
         scr.destroy()
         exit()
 
-def updateDashboard(num = None, pos = None, money = None, properties = None, jailCard = None):
+def updateDashboard(num = None, pos = None, money = None, properties = None, sets = None, jailCard = None):
     global players_info
 
     if pos is not None:
@@ -277,8 +278,10 @@ def updateDashboard(num = None, pos = None, money = None, properties = None, jai
         players_info[num][1] = money
     if properties is not None:
         players_info[num][2] = properties
+    if sets is not None:
+        players_info[num][3] = sets
     if jailCard is not None:
-        players_info[num][3] = jailCard
+        players_info[num][4] = jailCard
         
     if len(players_dashboard) > 0:
         packDashboard(num)
@@ -289,9 +292,22 @@ def packDashboard(num):
         widget.destroy()
     Label(players_dashboard[num], font = 'optima 30', fg = BLUE1, bg = BLUE0, text = f'                    💵 {players_info[num][1]}                    ').pack(padx = 2, pady = 2)
     Label(players_dashboard[num], font = 'optima 20', fg = BLUE1, bg = BLUE0, text = f'                         📍{players_info[num][0]}                         ').pack(padx = 2, pady = 2)
-    #f = Frame(players_dashboard[num], bg = BLUE0).pack(padx = 2, pady = 2)
-    #Label(f, font = 'aharoni 25', fg = BLUE1, bg = BLUE0, text = 'PROPERTIES').pack(padx = 2, pady = 2)
-
+    f = Frame(players_dashboard[num], bg = BLUE0)
+    f.pack(padx = 2, pady = 2)
+    Label(f, font = 'aharoni 15', fg = BLUE1, bg = BLUE0, text = '                              PROPERTIES                              ').pack(padx = 2, pady = 2)
+    for i in sorted(players_info[num][2]):
+        b = Frame(f, bg = tiles_colour[i])
+        b.pack(padx = 4, pady = 2)
+        inSet = False
+        for s in players_info[num][3]:
+            if i in s:
+                inSet = True
+                break
+        if inSet:
+            Label(b, font = 'optima 15 bold', fg = '#fad852', bg = BLUE1, text = f'                                        {property_name[i]}                                        ').pack(padx = 2, pady = 2)
+        else:
+            Label(b, font = 'optima 15', fg = WHITE, bg = BLUE1, text = f'                                        {property_name[i]}                                        ').pack(padx = 2, pady = 2)
+    
 
 #################### TK ####################
 

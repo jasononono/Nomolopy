@@ -395,16 +395,16 @@ class Player:
         if not self.loop:
             return
         if not self.has_set:
-            for set in color_sets:
-                if set in self.owned_properties:
+            for s in color_sets:
+                if s in self.owned_properties:
                     self.has_set = True
-                    self.sets.append(set)
+                    self.sets.append(s)
         if not self.has_set:
             return
         # UI import
         print("You have the following sets:")
-        for set in self.sets:
-            print(set)
+        for s in self.sets:
+            print(s)
         purchase_bool = input("Do you want to purchase a building? (y/n) ")  # placeholder
         if purchase_bool.lower == "y":
             # UI import
