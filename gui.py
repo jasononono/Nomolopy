@@ -327,7 +327,7 @@ subtitle = Label(scr, bg=BLUE0, fg=BLUE1, text='~ Very Original, est. 2024 ~', f
 
 ### buttons ###
 
-m_play = Button(scr, bg=BLUE1, fg=BLUE2, text='PLAY', font='aharoni 60', command=lambda: updateAnimation('setup', 1))
+m_play = Button(scr, bg=BLUE1, fg=BLUE2, text='PLAY', font='aharoni 60', command=lambda: updateAnimation('setup', 1), highlightbackground=BLUE1)
 
 #################### SETUP MENU ####################
 
@@ -341,11 +341,11 @@ players_color = [RED, GREEN, BLUE, YELLOW, PINK]
 players_token = []
 players_info = [[None] * 5 for i in range(5)]
 for i in range(5):
-    players_label.append(Entry(scr, width=10, fg = players_color[i], textvariable=players_name[i], font='optima 50 italic bold'))
-    players_openfile.append(Button(scr, text = 'Import token', command = lambda x = i: importFile(x)))
-    players_selectcolor.append(Button(scr, text = 'Change color', command = lambda x = i: changePlayerColor(x)))
+    players_label.append(Entry(scr, width=10, fg = players_color[i], bg=BLUE0, textvariable=players_name[i], font='optima 50 italic bold', highlightbackground=BLUE1))
+    players_openfile.append(Button(scr, text = 'Import token', command = lambda x = i: importFile(x), highlightbackground=BLUE1))
+    players_selectcolor.append(Button(scr, text = 'Change color', command = lambda x = i: changePlayerColor(x), highlightbackground=BLUE1))
 
-s_play = Button(scr, bg=BLUE1, fg=BLUE2, text='PLAY', font='aharoni 60', command=lambda: updateAnimation('board', 1))
+s_play = Button(scr, bg=BLUE1, fg=BLUE2, text='PLAY', font='aharoni 60', command=lambda: updateAnimation('board', 1), highlightbackground=BLUE1)
 
 #################### GAME BOARD ####################
 
@@ -383,7 +383,7 @@ queryAns = None
 ### dashboards ###
 
 players_dashboard = []
-dashboardButton = Button(scr, text = 'Dashboards', font = 'optima 30', command = openDashboard)
+dashboardButton = Button(scr, text = 'Dashboards', font = 'optima 30', command = openDashboard, highlightbackground=BLUE0)
 
 #################### OTHER STUFF ####################
 
