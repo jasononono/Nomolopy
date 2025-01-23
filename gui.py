@@ -260,6 +260,7 @@ def openDashboard(fixedState = None):
             players_dashboard[-1].geometry('300x400')
             players_dashboard[-1].title(f'Player {i + 1} - {j}')
             players_dashboard[-1].config(bg = BLUE1, padx = 2, pady = 2)
+            players_dashboard[-1].resizable(False, False)
     for i in range(len(players_dashboard)):
         packDashboard(i)
 
@@ -316,6 +317,7 @@ scr = Tk()
 scr.geometry('800x800')
 center(scr)
 scr.title(' NOMOLOPY ')
+scr.resizable(False, False)
 scr.protocol('WM_DELETE_WINDOW', exitProgram)
 #################### MAIN MENU ####################
 
