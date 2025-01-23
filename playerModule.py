@@ -51,19 +51,26 @@ class Player:
         gui.msg(f"{self.player_name} landed on {property_name[self.position]}.")
         return roll
 
+    def circularTokenMove(self, place):
+        turn_corner = ((self.position % 10 + place - self.position) > 10)
+        if turn_corner:
+            print(self.position//10, place//10)
+            self.circularTokenMove(self.position//10*10+10)
+        self.guiPos = gui.moveToken(self.player_num, self.guiPos, place)
+        self.position = place
+
+
     def move(self, num):
-        self.position = (self.position + num) % 40
+        self.circularTokenMove((self.position + num) % 40)
+        gui.updateDashboard(self.player_num, pos = property_name[self.position])
         if num < 0:
             return
         if self.position - num < 0:
             self.money += 200
             gui.msg(f"{self.player_name} passed go and collected $200.")
-        self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
-        gui.updateDashboard(self.player_num, pos = property_name[self.position])
 
     def goToJail(self):
-        self.position = 40
-        self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
+        self.circularTokenMove(40)
         gui.updateDashboard(self.player_num, pos = property_name[self.position])
 
     def mortgageOrSell(self, amount):
@@ -134,8 +141,7 @@ class Player:
                     if self.mortgageOrSell(50) == -1:
                         gui.msg(f"{self.player_name} stayed in jail.")
                         return
-                self.position = 10
-                self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
+                self.circularTokenMove(10)
                 return "Out of jail"
             else:
                 gui.msg(f"{self.player_name} stayed in jail.")
@@ -208,12 +214,13 @@ class Player:
             elif draw_card == 5 or draw_card == 6:
                 #nearest railroad
                 gui.msg(f"{self.player_name} advanced to the nearest railroad.")
-                if (self.position - (self.position % 10) + 5) < (self.position):
-                    self.position += 5
-                self.position -= self.position % 10
-                self.position += 5
-                self.position %= 40
-                self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
+                new_pos = self.position
+                if (new_pos - (new_pos % 10) + 5) < (new_pos):
+                    new_pos += 5
+                new_pos -= new_pos % 10
+                new_pos += 5
+                new_pos %= 40
+                self.circularTokenMove(new_pos)
                 if property_owner[self.position] != -1 and property_owner[self.position] != self.player_num:
                     gui.msg(f"{self.player_name} paid double!")
                     self.spaceAction(self.position, players=players)
@@ -233,7 +240,6 @@ class Player:
                 #GO
                 gui.msg(f"{self.player_name} advanced to Go.")
                 self.move(40 - self.position)
-                self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
             elif draw_card == 9:
                 #jail
                 gui.msg(f"{self.player_name} went to jail.")
@@ -241,7 +247,7 @@ class Player:
             elif draw_card == 10:
                 #go back 3 spaces
                 gui.msg(f"{self.player_name} went back three spaces.")
-                self.move(-3)
+                self.position = self.position - 3 % 40
                 self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
             gui.msg(f"{self.player_name} landed on {property_name[self.position]}.")
             self.spaceAction(self.position, players=players)
@@ -301,8 +307,7 @@ class Player:
             if draw_card == 1:
                 #GO
                 gui.msg(f"{self.player_name} advanced to Go.")
-                self.position = 0
-                self.guiPos = gui.moveToken(self.player_num, self.guiPos, self.position)
+                self.circularTokenMove(0)
             elif draw_card == 2:
                 #jail
                 gui.msg(f"{self.player_name} went to jail.")
