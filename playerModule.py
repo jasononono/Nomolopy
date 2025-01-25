@@ -69,7 +69,7 @@ class Player:
             return
         if self.position - num < 0:
             self.money += 200
-            gui.msg(f"{self.player_name} passed go and collected $200.")
+            gui.msg(f"{self.player_name} passed Go and collected $200.")
 
     def goToJail(self):
         self.circularTokenMove(40)
@@ -136,7 +136,7 @@ class Player:
                 query = gui.popup("Do you want to pay $50 to get out of jail?", ["YES", "NO"])
             if query == "YES":
                 if self.jail_free_card:
-                    self.jail_free_card == False
+                    self.jail_free_card = False
                 elif self.money >= 50:
                     self.money -= 50
                 else:
@@ -242,6 +242,8 @@ class Player:
                 #GO
                 gui.msg(f"{self.player_name} advanced to Go.")
                 self.circularTokenMove(0)
+                gui.msg(f"{self.player_name} passed Go and collected $200.")
+                self.money += 200
             elif draw_card == 9:
                 #jail
                 gui.msg(f"{self.player_name} went to jail.")
@@ -310,6 +312,8 @@ class Player:
                 #GO
                 gui.msg(f"{self.player_name} advanced to Go.")
                 self.circularTokenMove(0)
+                gui.msg(f"{self.player_name} passed Go and collected $200.")
+                self.money += 200
             elif draw_card == 2:
                 #jail
                 gui.msg(f"{self.player_name} went to jail.")
@@ -340,13 +344,13 @@ class Player:
             self.money += 200
         elif draw_card <= 13:
             if draw_card == 11:
-                gui.msg(f"{self.player_name} needs to pay school fees. \nPay $50.")
+                gui.msg(f"{self.player_name} needs to pay school fees. Pay $50.")
                 cost = 50
             elif draw_card == 12:
-                gui.msg(f"{self.player_name} needs to pay doctor's fees. \nPay $50.")
+                gui.msg(f"{self.player_name} needs to pay doctor's fees. Pay $50.")
                 cost = 50
             elif draw_card == 13:
-                gui.msg(f"{self.player_name} needs to pay hospital fees. \nPay $100.")
+                gui.msg(f"{self.player_name} needs to pay hospital fees. Pay $100.")
                 cost = 100
             if self.money >= cost:
                 self.money -= cost
