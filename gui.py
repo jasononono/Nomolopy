@@ -68,11 +68,15 @@ def changePlayerColor(p):
     scr.update()
 
 def retrievePlayers():
-    global players_name
+    global players_name, players_color
     p = []
-    for i in players_name:
+    c = []
+    for n, i in enumerate(players_name):
         if i.get() != '':
             p.append(i.get())
+            c.append(players_color[n])
+    players_color = c
+            
     if len(p) > 1:
         players_name = p
         return True
