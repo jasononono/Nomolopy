@@ -305,7 +305,7 @@ def packDashboard(num):
                 inSet = True
                 break
         if inSet:
-            Label(b, font = 'optima 15 bold', fg = '#fad852', bg = BLUE1, text = f'                                        {property_name[i]}                                        ').pack(padx = 2, pady = 2)
+            Label(b, font = 'optima 15 bold', fg = '#fad852', bg = BLUE1, text = f'                                  {"🔴" if property_state[i] == 5 else "🟢"*property_state[i]}  {property_name[i]}                                        ').pack(padx = 2, pady = 2)
         else:
             Label(b, font = 'optima 15', fg = WHITE, bg = BLUE1, text = f'                                        {property_name[i]}                                        ').pack(padx = 2, pady = 2)
     
