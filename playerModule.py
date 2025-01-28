@@ -375,7 +375,10 @@ class Player:
             self.money += (len(players)-1)*10
         elif draw_card == 15:
             gui.msg(f"{self.player_name} got a get out of jail free card.")
-            self.jail_free_card = True
+            if self.jail_free_card:
+                gui.msg(f"{self.player_name} can't have any more cards.")
+            else:
+                self.jail_free_card = True
         else:
             cost, houses, hotels = self.buildingRepairs(40, 115)
             gui.msg(f"Street repairs! {self.player_name} has to pay ${cost} for {houses} houses and {hotels} hotels.")
