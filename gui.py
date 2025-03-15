@@ -75,9 +75,9 @@ def retrievePlayers():
         if i.get() != '':
             p.append(i.get())
             c.append(players_color[n])
-    players_color = c
             
     if len(p) > 1:
+        players_color = c
         players_name = p
         return True
     return False
@@ -158,7 +158,7 @@ def updateWindow(location):
 def updateAnimation(location, direction):
     global LOCATION, transition, scr
 
-    if location != 'board' or retrievePlayers():
+    if location == 'setup' or (location == 'board' and retrievePlayers()):
         transition.place(x=800 * direction, y=0)
         for i in range(15):
             current = int(transition.place_info().get('x'))
@@ -402,55 +402,48 @@ defaultToken = Image.open('token1.png')
 defaultToken = defaultToken.resize(tokenSizing(defaultToken.width, defaultToken.height))
 defaultToken = ImageTk.PhotoImage(defaultToken)
 
-def display1(c):
+def displayDice(c, num):
     c.delete("all")
-    c.create_oval(42.5, 42.5, 62.5, 62.5, fill="black")
-def display2(c):
-    c.delete("all")
-    c.create_oval(22.5, 22.5, 42.5, 42.5, fill="black")
-    c.create_oval(60, 60, 80, 80, fill="black")
-def display3(c):
-    c.delete("all")
-    c.create_oval(20, 20, 40, 40, fill="black")
-    c.create_oval(65, 65, 85, 85, fill="black")
-    c.create_oval(42.5, 42.5, 62.5, 62.5, fill="black")
-def display4(c):
-    c.delete("all")
-    c.create_oval(20, 20, 40, 40, fill="black")
-    c.create_oval(65, 65, 85, 85, fill="black")
-    c.create_oval(65, 20, 85, 40, fill="black")
-    c.create_oval(20, 65, 40, 85, fill="black")
-def display5(c):
-    c.delete("all")
-    c.create_oval(20, 20, 40, 40, fill="black")
-    c.create_oval(65, 65, 85, 85, fill="black")
-    c.create_oval(65, 20, 85, 40, fill="black")
-    c.create_oval(20, 65, 40, 85, fill="black")
-    c.create_oval(42.5, 42.5, 62.5, 62.5, fill="black")
-def display6(c):
-    c.delete("all")
-    c.create_oval(20, 17.5, 40, 37.5, fill="black")
-    c.create_oval(65, 67.5, 85, 87.5, fill="black")
-    c.create_oval(65, 17.5, 85, 37.5, fill="black")
-    c.create_oval(20, 67.5, 40, 87.5, fill="black")
-    c.create_oval(20, 42.5, 40, 62.5, fill="black")
-    c.create_oval(65, 42.5, 85, 62.5, fill="black")
-
-faces = [lambda a: display1(a), lambda a: display2(a), lambda a: display3(a), lambda a: display4(a), lambda a: display5(a), lambda a: display6(a)]
+    if num == 1:
+        c.create_oval(42.5, 42.5, 62.5, 62.5, fill="black")
+    elif num == 2:
+        c.create_oval(22.5, 22.5, 42.5, 42.5, fill="black")
+        c.create_oval(60, 60, 80, 80, fill="black")
+    elif num == 3:
+        c.create_oval(20, 20, 40, 40, fill="black")
+        c.create_oval(65, 65, 85, 85, fill="black")
+        c.create_oval(42.5, 42.5, 62.5, 62.5, fill="black")
+    elif num == 4:
+        c.create_oval(20, 20, 40, 40, fill="black")
+        c.create_oval(65, 65, 85, 85, fill="black")
+        c.create_oval(65, 20, 85, 40, fill="black")
+        c.create_oval(20, 65, 40, 85, fill="black")
+    elif num == 5:
+        c.create_oval(20, 20, 40, 40, fill="black")
+        c.create_oval(65, 65, 85, 85, fill="black")
+        c.create_oval(65, 20, 85, 40, fill="black")
+        c.create_oval(20, 65, 40, 85, fill="black")
+        c.create_oval(42.5, 42.5, 62.5, 62.5, fill="black")
+    else:
+        c.create_oval(20, 17.5, 40, 37.5, fill="black")
+        c.create_oval(65, 67.5, 85, 87.5, fill="black")
+        c.create_oval(65, 17.5, 85, 37.5, fill="black")
+        c.create_oval(20, 67.5, 40, 87.5, fill="black")
+        c.create_oval(20, 42.5, 40, 62.5, fill="black")
+        c.create_oval(65, 42.5, 85, 62.5, fill="black")
 
 def displayRoll(d1, d2):
-    global dice_screen, dice1, dice1, faces
+    global dice_screen, dice1, dice2, faces
     speed = 25
     while speed > 1:
         dice_screen.after(int(500 / speed))
-        faces[randint(0, 5)](dice1)
-        faces[randint(0, 5)](dice2)
+        displayDice(dice1, randint(1, 6))
+        displayDice(dice2, randint(1, 6))
         dice_screen.update()
-        print(int(500 / speed))
         speed -= 0.5
     dice_screen.after(500)
-    faces[d1-1](dice1)
-    faces[d2-1](dice2)
+    displayDice(dice1, d1 - 1)
+    displayDice(dice2, d2 - 1)
     dice_screen.update()
     dice_screen.after(1000)
 
@@ -462,6 +455,6 @@ dice1 = Canvas(dice_screen, height=100, width=100, bg="white", highlightbackgrou
 dice1.place(x=100, y=75)
 dice2 = Canvas(dice_screen, height=100, width=100, bg="white", highlightbackground=BLUE1)
 dice2.place(x=300, y=75)
-display6(dice1)
-display6(dice2)
+displayDice(dice1, 6)
+displayDice(dice2, 6)
 dice_screen.withdraw()
