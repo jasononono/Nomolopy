@@ -312,7 +312,8 @@ def packDashboard(num):
             Label(b, font = 'optima 15 bold', fg = '#fad852', bg = BLUE1, text = f'                                  {"🔴" if property_state[i] == 5 else "🟢"*property_state[i]}  {property_name[i]}                                        ').pack(padx = 2, pady = 2)
         else:
             Label(b, font = 'optima 15', fg = WHITE, bg = BLUE1, text = f'                                        {property_name[i]}                                        ').pack(padx = 2, pady = 2)
-    
+
+
 
 #################### TK ####################
 
@@ -395,9 +396,72 @@ dashboardButton = Button(scr, text = 'Dashboards', font = 'optima 30', command =
 
 transitionImg = Image.open('transition.png')
 transitionImg = transitionImg.resize([800, 800])
-transitionImg =    ImageTk.PhotoImage(transitionImg)
+transitionImg = ImageTk.PhotoImage(transitionImg)
 transition = Label(scr, image=transitionImg, bd=0)
-
 defaultToken = Image.open('token1.png')
 defaultToken = defaultToken.resize(tokenSizing(defaultToken.width, defaultToken.height))
 defaultToken = ImageTk.PhotoImage(defaultToken)
+
+def display1(c):
+    c.delete("all")
+    c.create_oval(42.5, 42.5, 62.5, 62.5, fill="black")
+def display2(c):
+    c.delete("all")
+    c.create_oval(22.5, 22.5, 42.5, 42.5, fill="black")
+    c.create_oval(60, 60, 80, 80, fill="black")
+def display3(c):
+    c.delete("all")
+    c.create_oval(20, 20, 40, 40, fill="black")
+    c.create_oval(65, 65, 85, 85, fill="black")
+    c.create_oval(42.5, 42.5, 62.5, 62.5, fill="black")
+def display4(c):
+    c.delete("all")
+    c.create_oval(20, 20, 40, 40, fill="black")
+    c.create_oval(65, 65, 85, 85, fill="black")
+    c.create_oval(65, 20, 85, 40, fill="black")
+    c.create_oval(20, 65, 40, 85, fill="black")
+def display5(c):
+    c.delete("all")
+    c.create_oval(20, 20, 40, 40, fill="black")
+    c.create_oval(65, 65, 85, 85, fill="black")
+    c.create_oval(65, 20, 85, 40, fill="black")
+    c.create_oval(20, 65, 40, 85, fill="black")
+    c.create_oval(42.5, 42.5, 62.5, 62.5, fill="black")
+def display6(c):
+    c.delete("all")
+    c.create_oval(20, 17.5, 40, 37.5, fill="black")
+    c.create_oval(65, 67.5, 85, 87.5, fill="black")
+    c.create_oval(65, 17.5, 85, 37.5, fill="black")
+    c.create_oval(20, 67.5, 40, 87.5, fill="black")
+    c.create_oval(20, 42.5, 40, 62.5, fill="black")
+    c.create_oval(65, 42.5, 85, 62.5, fill="black")
+
+faces = [lambda a: display1(a), lambda a: display2(a), lambda a: display3(a), lambda a: display4(a), lambda a: display5(a), lambda a: display6(a)]
+
+def displayRoll(d1, d2):
+    global dice_screen, dice1, dice1, faces
+    speed = 25
+    while speed > 1:
+        dice_screen.after(int(500 / speed))
+        faces[randint(0, 5)](dice1)
+        faces[randint(0, 5)](dice2)
+        dice_screen.update()
+        print(int(500 / speed))
+        speed -= 0.5
+    dice_screen.after(500)
+    faces[d1-1](dice1)
+    faces[d2-1](dice2)
+    dice_screen.update()
+    dice_screen.after(1000)
+
+dice_screen = Tk()
+dice_screen.title("Roll the Dice")
+dice_screen.config(background=BLUE1)
+dice_screen.geometry("500x250+0+0")
+dice1 = Canvas(dice_screen, height=100, width=100, bg="white", highlightbackground=BLUE1)
+dice1.place(x=100, y=75)
+dice2 = Canvas(dice_screen, height=100, width=100, bg="white", highlightbackground=BLUE1)
+dice2.place(x=300, y=75)
+display6(dice1)
+display6(dice2)
+dice_screen.withdraw()

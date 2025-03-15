@@ -26,8 +26,10 @@ class Player:
         self.loop = True
 
     def rollDice(self, past_roll, double_count):
+        gui.dice_screen.deiconify()
         dice1 = random.randint(1, 6)
         dice2 = random.randint(1, 6)
+        gui.displayRoll(dice1, dice2)
         print(f"Rolled {dice1} and {dice2}")
         roll = past_roll + dice1 + dice2
         print("The roll is now " + str(roll))
@@ -46,6 +48,7 @@ class Player:
             print("Stay in jail")
             return None
         print("Rolled")
+        gui.dice_screen.withdraw()
         gui.msg(f"{self.player_name} rolled a {roll}.")
         self.move(roll)
         gui.msg(f"{self.player_name} landed on {property_name[self.position]}.")
