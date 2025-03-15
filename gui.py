@@ -405,31 +405,15 @@ defaultToken = ImageTk.PhotoImage(defaultToken)
 
 def displayDice(c, num):
     c.delete("all")
-    if num == 1:
+    if num in [1, 3, 5]:
         c.create_oval(42.5, 42.5, 62.5, 62.5, fill="black")
-    elif num == 2:
-        c.create_oval(22.5, 22.5, 42.5, 42.5, fill="black")
-        c.create_oval(60, 60, 80, 80, fill="black")
-    elif num == 3:
+    if num in [2, 3, 4, 5, 6]:
         c.create_oval(20, 20, 40, 40, fill="black")
         c.create_oval(65, 65, 85, 85, fill="black")
-        c.create_oval(42.5, 42.5, 62.5, 62.5, fill="black")
-    elif num == 4:
-        c.create_oval(20, 20, 40, 40, fill="black")
-        c.create_oval(65, 65, 85, 85, fill="black")
+    if num in [4, 5, 6]:
         c.create_oval(65, 20, 85, 40, fill="black")
         c.create_oval(20, 65, 40, 85, fill="black")
-    elif num == 5:
-        c.create_oval(20, 20, 40, 40, fill="black")
-        c.create_oval(65, 65, 85, 85, fill="black")
-        c.create_oval(65, 20, 85, 40, fill="black")
-        c.create_oval(20, 65, 40, 85, fill="black")
-        c.create_oval(42.5, 42.5, 62.5, 62.5, fill="black")
-    else:
-        c.create_oval(20, 17.5, 40, 37.5, fill="black")
-        c.create_oval(65, 67.5, 85, 87.5, fill="black")
-        c.create_oval(65, 17.5, 85, 37.5, fill="black")
-        c.create_oval(20, 67.5, 40, 87.5, fill="black")
+    if num == 6:
         c.create_oval(20, 42.5, 40, 62.5, fill="black")
         c.create_oval(65, 42.5, 85, 62.5, fill="black")
 
@@ -443,8 +427,8 @@ def displayRoll(d1, d2):
         dice_screen.update()
         speed -= 0.5
     dice_screen.after(500)
-    displayDice(dice1, d1 - 1)
-    displayDice(dice2, d2 - 1)
+    displayDice(dice1, d1)
+    displayDice(dice2, d2)
     dice_screen.update()
     dice_screen.after(1000)
 
