@@ -100,6 +100,7 @@ def updateWindow(location):
         players_selectcolor[i].grid_forget()
 
     s_play.place_forget()
+    tip.grid_forget()
 
     for i in range(41):
         tiles_bd[i].place_forget()
@@ -124,6 +125,7 @@ def updateWindow(location):
             players_selectcolor[i].grid(row = i, column = 2)
 
         s_play.place(anchor=CENTER, x=400, y=500)
+        tip.grid(row = 5, column = 0)
 
     if location == 'board':
         scr.config(bg=BLUE0)
@@ -208,10 +210,20 @@ def getPlayers():
 
 def msg(m):
     global mainDialogue
+    mainDialogue.config(fg = BLUE2)
     mainDialogue.config(text = m)
+    scr.update()
     # for i in range(20000):
     #     scr.update()
-    scr.after(500)
+    scr.after(1000)
+
+def omniousMsg(m, pause):
+    global mainDialogue
+    mainDialogue.config(text = m)
+    mainDialogue.config(fg = RED)
+    scr.update()
+    if pause:
+        scr.after(1000)
 
 def alterAns(ans):
     global queryAns
@@ -354,6 +366,8 @@ for i in range(5):
     players_selectcolor.append(Button(scr, text = 'Change color', command = lambda x = i: changePlayerColor(x), highlightbackground=BLUE1))
 
 s_play = Button(scr, bg=BLUE1, fg=BLUE2, text='PLAY', font='aharoni 60', command=lambda: updateAnimation('board', 1), highlightbackground=BLUE1)
+
+tip = Label(scr, bg = BLUE1, fg = RED, text = 'Tip: d̷͚͋ȯ̸ͅ ̸̨̍n̷͕͂o̴̬͂t̴̬͠ ̷̥͝n̷̙͐a̴͉̍ṃ̷͝e̸̥̔ ̴͓̉ÿ̵͈o̸̟͒u̶͚̅r̷̗̒ ̶̉͜p̷̻͘ļ̸͝ā̶͕y̸͠ͅë̴͚ȓ̵̫ C̵̢̨̧̧̡̻̗̩͎͇̩̠̗̫͉̬͔͕͖͈̠͖̥̙̭̝̣̱̗̜͔̙͚̜̟͇̔̽̇̽́Ŗ̷͔̳͈͗̄͑̽͂͛̓̂̈́̌̎͌̐͑͂̾̅̑̎̏͂̿́͒̏̏͋͐͛͑͑̆̂̅͝͝͝A̴̗͓̟̱̘͓̻̙̞̪͖̙̗͋͗̏̒͂̏̀̄͒̌̎̂̑̀͊̀̉̃̀̆́͆͂̀̎̄̑̂̔͒̈́͝͠͝N̸̨͍̗̹̤̳̼̯̦̗͕͙̅̊͒͊̇̒̈́̓͊͝E̸̴̴̡̢̧̢̧̡̛͉̤͓̞͙̪̫̪͖̬̻̣̰̠͚̻̗̮̲̱̫̩̼̼̟̬̪͔̜͔̘̤̼̝̰̼̥̘̗̦͖̹̱̝̰͈̜̿̆̅͆̓̆̇͗̊̓̾̑̋̈́̀͗͛̿̀̈́̇̓́̄͌̃̋̅͂̊̃͒́͒́̇͑͊̏̑̀̇͗̌͌̌́͊͗̐̂͗͛͆̀͆̎̊̉̾̍̾̑̔̍̀̽̉̈́̐́͐̅͗̕͝͝͝͝͝.', font = 'optima 10 italic')
 
 #################### GAME BOARD ####################
 

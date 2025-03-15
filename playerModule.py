@@ -10,6 +10,17 @@ railroads = (5, 15, 25, 35)
 utilities = (12, 28)
 null_space = (0, 10, 20)
 
+def craneBias(pos):
+    gui.omniousMsg('The dice bounced awkwardly on the board...', False)
+    for i in range(3, 13):
+        if (pos + i) % 40 in [2, 4, 7, 10, 12, 17, 20, 22, 28, 30, 33, 36, 38]:
+            d1 = random.randint(1, i - 1)
+            d2 = i - d1
+            while d1 == d2:
+                d1 = random.randint(1, i - 1)
+                d2 = i - d1
+            return d1, d2
+    return [[1, 2], [2, 1]][random.randint(0, 1)]
 
 class Player:
 
@@ -24,12 +35,16 @@ class Player:
         self.sets = []
         self.jail_free_card = False
         self.loop = True
+        self.isCrane = 'crane' in self.player_name.lower()
 
     def rollDice(self, past_roll, double_count):
         gui.dice_screen.deiconify()
         gui.center(gui.dice_screen, 0, -50)
-        dice1 = random.randint(1, 6)
-        dice2 = random.randint(1, 6)
+        if self.isCrane and random.randint(1, 4) <= 3:
+            dice1, dice2 = craneBias(self.position)
+        else:
+            dice1 = random.randint(1, 6)
+            dice2 = random.randint(1, 6)
         gui.displayRoll(dice1, dice2)
         print(f"Rolled {dice1} and {dice2}")
         roll = past_roll + dice1 + dice2
@@ -199,7 +214,13 @@ class Player:
 
     def drawChance(self):
         global players, property_owner
-        draw_card = random.randint(1, 16)
+        
+        if self.isCrane and random.randint(1, 4) <= 3:
+            gui.omniousMsg('It seems that fortune is \nno longer with this player...', True)
+            draw_card = [9, 10, 14, 15, 16][random.randint(0, 4)]
+        else:
+            draw_card = random.randint(1, 16)
+
         if draw_card <= 10:
             if draw_card == 1:
                 #reading railroad
@@ -310,7 +331,13 @@ class Player:
 
     def drawCommunityChest(self):
         global players
-        draw_card = random.randint(1, 16)
+        
+        if self.isCrane and random.randint(1, 4) <= 3:
+            gui.omniousMsg('An omnious red fog engulfed the player...', True)
+            draw_card = [2, 11, 12, 13, 16][random.randint(0, 4)]
+        else:
+            draw_card = random.randint(1, 16)
+
         if draw_card <= 2:
             if draw_card == 1:
                 #GO
