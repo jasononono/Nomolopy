@@ -27,6 +27,7 @@ class Player:
 
     def rollDice(self, past_roll, double_count):
         gui.dice_screen.deiconify()
+        gui.center(gui.dice_screen)
         dice1 = random.randint(1, 6)
         dice2 = random.randint(1, 6)
         gui.displayRoll(dice1, dice2)

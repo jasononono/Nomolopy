@@ -7,7 +7,7 @@ from tkinter import colorchooser
 from random import *
 from tkinter import filedialog
 from PIL import ImageTk, Image
-import sys, time
+import sys
 from data import *
 
 #################### COLOUR PALETTE ####################
@@ -209,8 +209,9 @@ def getPlayers():
 def msg(m):
     global mainDialogue
     mainDialogue.config(text = m)
-    for i in range(20000):
-        scr.update()
+    # for i in range(20000):
+    #     scr.update()
+    scr.after(500)
 
 def alterAns(ans):
     global queryAns
