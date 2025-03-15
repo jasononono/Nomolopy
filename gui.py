@@ -217,7 +217,7 @@ def alterAns(ans):
     global queryAns
     queryAns = ans
 
-def center(win): #center a window
+def center(win, x_offset, y_offset): #center a window
     win.update_idletasks()
     width = win.winfo_width()
     frm_width = win.winfo_rootx() - win.winfo_x()
@@ -225,8 +225,8 @@ def center(win): #center a window
     height = win.winfo_height()
     titlebar_height = win.winfo_rooty() - win.winfo_y()
     win_height = height + titlebar_height + frm_width
-    x = win.winfo_screenwidth() // 2 - win_width // 2
-    y = win.winfo_screenheight() // 2 - win_height // 2
+    x = win.winfo_screenwidth() // 2 - win_width // 2 + x_offset
+    y = win.winfo_screenheight() // 2 - win_height // 2 + y_offset
     win.geometry('{}x{}+{}+{}'.format(width, height, x, y))
     win.deiconify()
 
@@ -238,7 +238,7 @@ def popup(msg, options = ['OK']):
     window.title('Query')
     # window.geometry('{}x{}+{}+{}'.format(600, 200, 0, 0))
     window.geometry('600x200')
-    center(window)
+    center(window, 0, 0)
     Label(window, text = msg, font = 'optima 20').place(anchor = CENTER, x = 300, y = 50)
     f = Frame(window)
     f.pack(side = BOTTOM, pady = 20)
@@ -321,7 +321,7 @@ def packDashboard(num):
 
 scr = Tk()
 scr.geometry('800x800')
-center(scr)
+center(scr, 0, 0)
 scr.title(' NOMOLOPY ')
 scr.resizable(False, False)
 scr.protocol('WM_DELETE_WINDOW', exitProgram)
@@ -418,7 +418,7 @@ def displayDice(c, num):
         c.create_oval(65, 42.5, 85, 62.5, fill="black")
 
 def displayRoll(d1, d2):
-    global dice_screen, dice1, dice2, faces
+    global dice_screen, dice1, dice2
     speed = 25
     while speed > 1:
         dice_screen.after(int(500 / speed))
@@ -435,11 +435,9 @@ def displayRoll(d1, d2):
 dice_screen = Tk()
 dice_screen.title("Roll the Dice")
 dice_screen.config(background=BLUE1)
-dice_screen.geometry("500x250+0+0")
+dice_screen.geometry("500x250")
 dice1 = Canvas(dice_screen, height=100, width=100, bg="white", highlightbackground=BLUE1)
 dice1.place(x=100, y=75)
 dice2 = Canvas(dice_screen, height=100, width=100, bg="white", highlightbackground=BLUE1)
 dice2.place(x=300, y=75)
-displayDice(dice1, 6)
-displayDice(dice2, 6)
 dice_screen.withdraw()
