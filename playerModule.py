@@ -11,7 +11,7 @@ utilities = (12, 28)
 null_space = (0, 10, 20)
 
 def craneBias(pos):
-    gui.omniousMsg('The dice bounced awkwardly on the board...', False)
+    gui.omniousMsg('The dice bounce awkwardly on the board...', False)
     for i in range(3, 13):
         if (pos + i) % 40 in [2, 4, 7, 10, 12, 17, 20, 22, 28, 30, 33, 36, 38]:
             d1 = random.randint(1, i - 1)
