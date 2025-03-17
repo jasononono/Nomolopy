@@ -39,6 +39,7 @@ class Player:
 
     def rollDice(self, past_roll, double_count):
         gui.dice_screen.deiconify()
+        gui.dice_screen.attributes("-topmost", True)
         gui.center(gui.dice_screen, 0, -50)
         if self.isCrane and random.randint(1, 4) <= 3:
             dice1, dice2 = craneBias(self.position)
@@ -70,28 +71,26 @@ class Player:
         gui.msg(f"{self.player_name} landed on {property_name[self.position]}.")
         return roll
 
-    def circularTokenMove(self, place):
-        turn_corner = ((self.position % 10 + place - self.position) > 10 or place < self.position) and place != 40 and self.position != 40
+    def circularTokenMove(self, start, end):
+        turn_corner = ((self.position % 10 + end - self.position) > 10 or end < self.position) and end != 40 and self.position != 40
         if turn_corner:
             self.guiPos = gui.moveToken(self.player_num, self.guiPos, (self.position // 10 * 10 + 10) % 40)
             self.position = (self.position // 10 * 10 + 10) % 40
-            self.circularTokenMove(place)
+            self.circularTokenMove(self.position, end)
         else:
-            self.guiPos = gui.moveToken(self.player_num, self.guiPos, place)
-            self.position = place
+            self.guiPos = gui.moveToken(self.player_num, self.guiPos, end)
+            self.position = end
+            gui.updateDashboard(self.player_num, pos=property_name[self.position])
+            if self.position - start < 0:
+                self.money += 200
+                gui.msg(f"{self.player_name} passed Go and collected $200.")
 
 
     def move(self, num):
-        self.circularTokenMove((self.position + num) % 40)
-        gui.updateDashboard(self.player_num, pos = property_name[self.position])
-        if num < 0:
-            return
-        if self.position - num < 0:
-            self.money += 200
-            gui.msg(f"{self.player_name} passed Go and collected $200.")
+        self.circularTokenMove(self.position, (self.position + num) % 40)
 
     def goToJail(self):
-        self.circularTokenMove(40)
+        self.circularTokenMove(self.position, 40)
         gui.updateDashboard(self.player_num, pos = property_name[self.position])
 
     def mortgageOrSell(self, amount):
@@ -162,7 +161,7 @@ class Player:
                     if self.mortgageOrSell(50) == -1:
                         gui.msg(f"{self.player_name} stayed in jail.")
                         return
-                self.circularTokenMove(10)
+                self.circularTokenMove(self.position, 10)
                 return "Out of jail"
             else:
                 gui.msg(f"{self.player_name} stayed in jail.")
@@ -178,10 +177,13 @@ class Player:
                 for space in utilities:
                     if space in players[property_owner[space]].owned_properties:
                         utility_count += 1
+                d1, d2 = random.randint(1, 6), random.randint(1, 6)
+                gui.dice_screen.deiconify()
+                gui.displayRoll(d1, d2)
                 if utility_count == 1:
-                    rent = 4 * (random.randint(1, 6) + random.randint(1, 6))
+                    rent = 4 * d1 + d2
                 else:
-                    rent = 10 * (random.randint(1, 6) + random.randint(1, 6))
+                    rent = 10 * d1 + d2
             else:
                 rent = property_rent[space][property_state[space]]
                 players[property_owner[space]].money += rent
@@ -214,7 +216,6 @@ class Player:
 
     def drawChance(self):
         global players, property_owner
-        
         if self.isCrane and random.randint(1, 4) <= 3:
             gui.omniousMsg('It seems that fortune is \nno longer with this player...', True)
             draw_card = [9, 10, 14, 15, 16][random.randint(0, 4)]
@@ -225,19 +226,19 @@ class Player:
             if draw_card == 1:
                 #reading railroad
                 gui.msg(f"{self.player_name} advanced to Writing Railroad.")
-                self.circularTokenMove(5)
+                self.circularTokenMove(self.position, 5)
             elif draw_card == 2:
                 #st. charles
                 gui.msg(f"{self.player_name} advanced to St. Nicholas Place.")
-                self.circularTokenMove(11)
+                self.circularTokenMove(self.position, 11)
             elif draw_card == 3:
                 #illinois
                 gui.msg(f"{self.player_name} advanced to Healthinois Avenue.")
-                self.circularTokenMove(24)
+                self.circularTokenMove(self.position, 24)
             elif draw_card == 4:
                 #boardwalk
                 gui.msg(f"{self.player_name} advanced to Plankrun.")
-                self.circularTokenMove(39)
+                self.circularTokenMove(self.position, 39)
             elif draw_card == 5 or draw_card == 6:
                 #nearest railroad
                 gui.msg(f"{self.player_name} advanced to the nearest railroad.")
@@ -247,7 +248,7 @@ class Player:
                 new_pos -= new_pos % 10
                 new_pos += 5
                 new_pos %= 40
-                self.circularTokenMove(new_pos)
+                self.circularTokenMove(self.position, new_pos)
                 if property_owner[self.position] != -1 and property_owner[self.position] != self.player_num:
                     gui.msg(f"{self.player_name} paid double!")
                     self.spaceAction(self.position, players=players)
@@ -255,18 +256,18 @@ class Player:
                 #nearest utility
                 gui.msg(f"{self.player_name} advanced to the nearest utility.")
                 if self.position < 12:
-                    self.circularTokenMove(12)
+                    self.circularTokenMove(self.position, 12)
                 elif self.position < 28:
-                    self.circularTokenMove(28)
+                    self.circularTokenMove(self.position, 28)
                 else:
-                    self.circularTokenMove(12)
+                    self.circularTokenMove(self.position, 12)
                 if property_owner[self.position] != -1 and property_owner[self.position] != self.player_num:
                     gui.msg(f"{self.player_name} paid double!")
                     self.spaceAction(self.position, players=players)
             elif draw_card == 8:
                 #GO
                 gui.msg(f"{self.player_name} advanced to Go.")
-                self.circularTokenMove(0)
+                self.circularTokenMove(self.position, 0)
                 gui.msg(f"{self.player_name} passed Go and collected $200.")
                 self.money += 200
             elif draw_card == 9:
@@ -328,6 +329,7 @@ class Player:
                 else:
                     self.bankrupt()
                     return
+        gui.updateDashboard(num=self.player_num, pos=property_name[self.position], money=self.money, jailCard=self.jail_free_card)
 
     def drawCommunityChest(self):
         global players
@@ -342,7 +344,7 @@ class Player:
             if draw_card == 1:
                 #GO
                 gui.msg(f"{self.player_name} advanced to Go.")
-                self.circularTokenMove(0)
+                self.circularTokenMove(self.position, 0)
                 gui.msg(f"{self.player_name} passed Go and collected $200.")
                 self.money += 200
             elif draw_card == 2:
@@ -421,6 +423,7 @@ class Player:
                 else:
                     self.bankrupt()
                     return
+        gui.updateDashboard(num=self.player_num, pos=property_name[self.position], money=self.money, jailCard=self.jail_free_card)
 
     def buildingRepairs(self, house_p, hotel_p):
         total_cost = 0

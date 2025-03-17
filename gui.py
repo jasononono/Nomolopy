@@ -263,7 +263,7 @@ def popup(msg, options = ['OK']):
     return queryAns
 
 def openDashboard(fixedState = None):
-    global players_dashboard
+    global players_dashboard, players_info
     state = False
     if fixedState == True or (fixedState is not False and len(players_dashboard) == 0):
         state = True
@@ -279,6 +279,7 @@ def openDashboard(fixedState = None):
             players_dashboard[-1].config(bg = BLUE1, padx = 2, pady = 2)
             players_dashboard[-1].resizable(False, False)
     for i in range(len(players_dashboard)):
+        print(players_info[i])
         packDashboard(i)
 
 def exitProgram():
@@ -305,7 +306,7 @@ def updateDashboard(num = None, pos = None, money = None, properties = None, set
         packDashboard(num)
 
 def packDashboard(num):
-    global players_dashboard
+    global players_dashboard, players_info
     for widget in players_dashboard[num].winfo_children():
         widget.destroy()
     Label(players_dashboard[num], font = 'optima 30', fg = BLUE1, bg = BLUE0, text = f'                    💵 {players_info[num][1]}                    ').pack(padx = 2, pady = 2)
