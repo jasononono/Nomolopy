@@ -1,6 +1,7 @@
 import random
 from data import *
 import gui
+from tkinter import *
 
 players = []
 player_turn = 0
@@ -20,7 +21,7 @@ def craneBias(pos):
                 d1 = random.randint(1, i - 1)
                 d2 = i - d1
             return d1, d2
-    return [[1, 2], [2, 1]][random.randint(0, 1)]
+    return random.choice([[1, 2], [2, 1]])
 
 class Player:
 
@@ -47,6 +48,8 @@ class Player:
             dice1 = random.randint(1, 6)
             dice2 = random.randint(1, 6)
         gui.displayRoll(dice1, dice2)
+        if dice1 != dice2 or double_count > 2:
+            gui.dice_screen.withdraw()
         print(f"Rolled {dice1} and {dice2}")
         roll = past_roll + dice1 + dice2
         print("The roll is now " + str(roll))
@@ -65,7 +68,6 @@ class Player:
             print("Stay in jail")
             return None
         print("Rolled")
-        gui.dice_screen.withdraw()
         gui.msg(f"{self.player_name} rolled a {roll}.")
         self.move(roll)
         gui.msg(f"{self.player_name} landed on {property_name[self.position]}.")
@@ -81,7 +83,7 @@ class Player:
             self.guiPos = gui.moveToken(self.player_num, self.guiPos, end)
             self.position = end
             gui.updateDashboard(self.player_num, pos=property_name[self.position])
-            if self.position - start < 0:
+            if self.position == 0:
                 self.money += 200
                 gui.msg(f"{self.player_name} passed Go and collected $200.")
 
@@ -93,40 +95,46 @@ class Player:
         self.circularTokenMove(self.position, 40)
         gui.updateDashboard(self.player_num, pos = property_name[self.position])
 
+    def mortgagePopup(self):
+        m_scr = Tk()
+        m_scr.config(bg=gui.BLUE1)
+        m_scr.geometry("350x100")
+        m_scr.title("You can't pay!")
+        gui.center(m_scr)
+        Label(m_scr, text="You don't have enough to pay!\nSell some properties to continue.", font="optima 20", fg=gui.BLUE2, bg=gui.BLUE1).place(anchor="center", x=175, y=50)
+        m_scr.update()
+        return m_scr
+
     def mortgageOrSell(self, amount):
         global property_state, property_name
         #UI import
-        str = ""
-        for property in self.owned_properties:
-            str += f"{property_name.index(property)}. {property_name[property]} - {property_state[property]} houses\n"
-        print(str)
-        if gui.popup(f"{self.player_name}, you don't have enough money to pay for this. \nWould you like to mortgage your properties?", ["YES", "NO"]) == "NO":
-            return -1
-        while True:
-            mortgage = self.owned_properties[int(input("Which properties would you like to mortgage?")) - 1]
-            if property_state[mortgage] > 0:
-                if mortgage < 10:
-                    self.money += 25
-                elif mortgage < 20:
-                    self.money += 50
-                elif mortgage < 30:
-                    self.money += 75
-                else:
-                    self.money += 100
-                gui.msg(f"{self.player_name} sold a building on {property_name[mortgage]} and now have ${self.money}.")
+        m_win = self.mortgagePopup()
+        while self.owned_properties and self.money < amount:
+            gui.updateDashboard(num=self.player_num, money=self.money, properties=self.owned_properties, can_sell=True)
+            while not gui.sell_queue:
+                gui.scr.update()
+            sell_p = gui.sell_queue.pop(0)
+            print(sell_p)
+            if property_state[sell_p] == 0:
+                self.money += property_purchase_price[sell_p]
+                self.owned_properties.remove(sell_p)
+                property_state[sell_p] = -2
             else:
-                self.money += property_purchase_price[mortgage]/2
-                gui.msg(f"{self.player_name} sold {property_name[mortgage]} and now have ${self.money}.")
-            gui.msg(f"The amount required is ${amount}.")
-            property_state[mortgage] -= 1
-            if self.money >= amount:
-                self.money -= amount
-                return 1
-            if len(self.owned_properties) < 1:
-                return -1
-            if gui.popup("Do you want to continue selling properties?", ["YES", "NO"]) == "NO":
-                return -1
-
+                if sell_p < 10:
+                    self.money += 25
+                elif sell_p < 20:
+                    self.money += 50
+                elif sell_p < 30:
+                    self.money += 100
+                else:
+                    self.money += 200
+                property_state[sell_p] -= 1
+        gui.updateDashboard(num=self.player_num, properties=self.owned_properties, money=self.money)
+        m_win.destroy()
+        if self.money >= amount:
+            return -1
+        else:
+            return 1
 
 
 
@@ -162,6 +170,7 @@ class Player:
                         gui.msg(f"{self.player_name} stayed in jail.")
                         return
                 self.circularTokenMove(self.position, 10)
+                gui.updateDashboard(self.player_num, money=self.money, jailCard=self.jail_free_card)
                 return "Out of jail"
             else:
                 gui.msg(f"{self.player_name} stayed in jail.")
@@ -185,7 +194,7 @@ class Player:
                 else:
                     rent = 10 * d1 + d2
             else:
-                rent = property_rent[space][property_state[space]]
+                rent = property_rent[space][property_state[space]+1]
                 players[property_owner[space]].money += rent
             if self.money >= rent:
                 self.money -= rent
@@ -447,6 +456,9 @@ class Player:
                 if s in self.owned_properties:
                     self.has_set = True
                     self.sets.append(s)
+                    for p in s:
+                        if property_state[p] < 1:
+                            property_state[p] = 1
         if not self.has_set:
             return
         # UI import

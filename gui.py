@@ -229,7 +229,7 @@ def alterAns(ans):
     global queryAns
     queryAns = ans
 
-def center(win, x_offset, y_offset): #center a window
+def center(win, x_offset = 0, y_offset = 0): #center a window
     win.update_idletasks()
     width = win.winfo_width()
     frm_width = win.winfo_rootx() - win.winfo_x()
@@ -250,12 +250,13 @@ def popup(msg, options = ['OK']):
     window.title('Query')
     # window.geometry('{}x{}+{}+{}'.format(600, 200, 0, 0))
     window.geometry('600x200')
-    center(window, 0, 0)
-    Label(window, text = msg, font = 'optima 20').place(anchor = CENTER, x = 300, y = 50)
+    center(window)
+    window.config(bg=BLUE1)
+    Label(window, text = msg, font = 'optima 20', fg=BLUE2, bg=BLUE1).place(anchor = CENTER, x = 300, y = 50)
     f = Frame(window)
     f.pack(side = BOTTOM, pady = 20)
     for i in options:
-        Button(f, text = i, height = 2, command = lambda x = i: alterAns(x)).pack(side = RIGHT)
+        Button(f, text = i, height = 2, highlightbackground=BLUE1, command = lambda x = i: alterAns(x)).pack(side = RIGHT)
     while queryAns is None:
         scr.update()
         window.update()
@@ -280,7 +281,7 @@ def openDashboard(fixedState = None):
             players_dashboard[-1].resizable(False, False)
     for i in range(len(players_dashboard)):
         print(players_info[i])
-        packDashboard(i)
+        packDashboard(i, False)
 
 def exitProgram():
     query = messagebox.askyesno('Caution!', 'Are you sure you want to exit the program?\nYour game\'s progress will be lost.')
@@ -288,7 +289,7 @@ def exitProgram():
         scr.destroy()
         exit()
 
-def updateDashboard(num = None, pos = None, money = None, properties = None, sets = None, jailCard = None):
+def updateDashboard(num = None, pos = None, money = None, properties = None, sets = None, jailCard = None, can_sell = False):
     global players_info
 
     if pos is not None:
@@ -303,9 +304,9 @@ def updateDashboard(num = None, pos = None, money = None, properties = None, set
         players_info[num][4] = jailCard
         
     if len(players_dashboard) > 0:
-        packDashboard(num)
+        packDashboard(num, can_sell)
 
-def packDashboard(num):
+def packDashboard(num, can_sell):
     global players_dashboard, players_info
     for widget in players_dashboard[num].winfo_children():
         widget.destroy()
@@ -315,26 +316,34 @@ def packDashboard(num):
     f.pack(padx = 2, pady = 2)
     Label(f, font = 'aharoni 15', fg = BLUE1, bg = BLUE0, text = '                              PROPERTIES                              ').pack(padx = 2, pady = 2)
     for i in sorted(players_info[num][2]):
-        b = Frame(f, bg = tiles_colour[i])
-        b.pack(padx = 4, pady = 2)
+        b = Canvas(f, bg = tiles_colour[i], width=280, height=26, highlightthickness=0)
+        b.pack(padx = 4)
+        b.create_rectangle(1, 1, 279, 25, fill=BLUE1, outline=tiles_colour[i], width=2)
         inSet = False
         for s in players_info[num][3]:
             if i in s:
                 inSet = True
                 break
         if inSet:
-            Label(b, font = 'optima 15 bold', fg = '#fad852', bg = BLUE1, text = f'                                  {"🔴" if property_state[i] == 5 else "🟢"*property_state[i]}  {property_name[i]}                                        ').pack(padx = 2, pady = 2)
+            b.create_text(140.5, 13, font = 'optima 15 bold', fill = '#fad852', text = f'{"🔴" if property_state[i] == 5 else "🟢"*property_state[i]}  {property_name[i]}')
         else:
-            Label(b, font = 'optima 15', fg = WHITE, bg = BLUE1, text = f'                                        {property_name[i]}                                        ').pack(padx = 2, pady = 2)
+            b.create_text(140.5, 13, font = 'optima 15', fill = WHITE, text = f'{property_name[i]}')
+        if can_sell:
+            sell_button = Button(b, height=1, font = 'optima 10', text="Sell", highlightthickness=0, highlightbackground=BLUE1, command=lambda x = i: placeSellOrder(x))
+            sell_button.place(x=223, y=2)
 
-
+sell_queue = []
+def placeSellOrder(property):
+    global sell_queue
+    print("p", property)
+    sell_queue.append(property)
 
 #################### TK ####################
 
 
 scr = Tk()
 scr.geometry('800x800')
-center(scr, 0, 0)
+center(scr)
 scr.title(' NOMOLOPY ')
 scr.resizable(False, False)
 scr.protocol('WM_DELETE_WINDOW', exitProgram)
