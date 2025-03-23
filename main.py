@@ -28,14 +28,6 @@ while gui.LOCATION != 'board':
      gui.scr.update()
 
 setup()
-player1 = players[0]
-player1.owned_properties.append(1)
-property_state[1] = 0
-player1.owned_properties.append(5)
-property_state[5] = 0
-gui.updateDashboard(0, money = player1.money, properties = player1.owned_properties, sets = player1.sets)
-gui.openDashboard(True)
-player1.mortgageOrSell(1760)
 
 while len(players) > 1:
      gui.scr.update()

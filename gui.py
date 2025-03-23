@@ -280,7 +280,6 @@ def openDashboard(fixedState = None):
             players_dashboard[-1].config(bg = BLUE1, padx = 2, pady = 2)
             players_dashboard[-1].resizable(False, False)
     for i in range(len(players_dashboard)):
-        print(players_info[i])
         packDashboard(i, False)
 
 def exitProgram():
@@ -335,7 +334,6 @@ def packDashboard(num, can_sell):
 sell_queue = []
 def placeSellOrder(property):
     global sell_queue
-    print("p", property)
     sell_queue.append(property)
 
 #################### TK ####################

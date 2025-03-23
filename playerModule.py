@@ -114,7 +114,6 @@ class Player:
             while not gui.sell_queue:
                 gui.scr.update()
             sell_p = gui.sell_queue.pop(0)
-            print(sell_p)
             if property_state[sell_p] == 0:
                 self.money += property_purchase_price[sell_p]
                 self.owned_properties.remove(sell_p)
