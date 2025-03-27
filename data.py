@@ -6,3 +6,5 @@ property_purchase_price = (0, 60, 0, 60, 0, 200, 100, 0, 100, 120, 0, 140, 150, 
 property_state = [-2]*40
 # -1 = unowned, otherwise player index
 property_owner = [-1]*40
+
+players_info = [[None] * 5 for i in range(5)]

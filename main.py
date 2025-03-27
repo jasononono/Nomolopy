@@ -28,7 +28,14 @@ while gui.LOCATION != 'board':
      gui.scr.update()
 
 setup()
-
+# player1 = players[0]
+# player1.owned_properties.append(1)
+# property_state[1] = 0
+# player1.owned_properties.append(3)
+# property_state[3] = 0
+# gui.openDashboard()
+# gui.updateDashboard(player1.player_num, money = player1.money, properties = player1.owned_properties, sets = [(1, 3)])
+# gui.scr.mainloop()
 while len(players) > 1:
      gui.scr.update()
      turn(players[player_turn])

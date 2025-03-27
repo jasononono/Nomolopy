@@ -325,6 +325,9 @@ def packDashboard(num, can_sell):
                 break
         if inSet:
             b.create_text(140.5, 13, font = 'optima 15 bold', fill = '#fad852', text = f'{"🔴" if property_state[i] == 5 else "🟢"*property_state[i]}  {property_name[i]}')
+            #make buy button here, similar queue, check() function in playerModule, update dashboard first and ignore delay
+            buy_button = Button(b, height=1, font='optima 10', text="Upgrade", highlightthickness=0, highlightbackground=BLUE1, command=lambda x=i: placeBuyOrder(x))
+            buy_button.place(x=2, y=2)
         else:
             b.create_text(140.5, 13, font = 'optima 15', fill = WHITE, text = f'{property_name[i]}')
         if can_sell:
@@ -335,6 +338,12 @@ sell_queue = []
 def placeSellOrder(property):
     global sell_queue
     sell_queue.append(property)
+
+delayed_players = []
+def placeBuyOrder(property):
+    global delayed_players
+    if not property_owner[property] in delayed_players:
+        delayed_players.append(property_owner[property])
 
 #################### TK ####################
 
@@ -367,7 +376,6 @@ players_selectcolor = []
 players_tokenImg = [''] * 5
 players_color = [RED, GREEN, BLUE, YELLOW, PINK]
 players_token = []
-players_info = [[None] * 5 for i in range(5)]
 for i in range(5):
     players_label.append(Entry(scr, width=10, fg = players_color[i], bg=BLUE0, textvariable=players_name[i], font='optima 50 italic bold', highlightbackground=BLUE1))
     players_openfile.append(Button(scr, text = 'Import token', command = lambda x = i: importFile(x), highlightbackground=BLUE1))
