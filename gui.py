@@ -264,7 +264,7 @@ def popup(msg, options = ['OK']):
     return queryAns
 
 def openDashboard(fixedState = None):
-    global players_dashboard, players_info
+    global players_dashboard
     state = False
     if fixedState == True or (fixedState is not False and len(players_dashboard) == 0):
         state = True
@@ -288,29 +288,17 @@ def exitProgram():
         scr.destroy()
         exit()
 
-def updateDashboard(num = None, pos = None, money = None, properties = None, sets = None, jailCard = None, can_sell = False):
-    global players_info
-
-    if pos is not None:
-        players_info[num][0] = pos
-    if money is not None:
-        players_info[num][1] = money
-    if properties is not None:
-        players_info[num][2] = properties
-    if sets is not None:
-        players_info[num][3] = sets
-    if jailCard is not None:
-        players_info[num][4] = jailCard
-        
+def updateDashboard(num = None, can_sell = False):
+    global players_dashboard
     if len(players_dashboard) > 0:
         packDashboard(num, can_sell)
 
 def packDashboard(num, can_sell):
-    global players_dashboard, players_info
+    global players_dashboard
     for widget in players_dashboard[num].winfo_children():
         widget.destroy()
     Label(players_dashboard[num], font = 'optima 30', fg = BLUE1, bg = BLUE0, text = f'                    💵 {players_info[num][1]}                    ').pack(padx = 2, pady = 2)
-    Label(players_dashboard[num], font = 'optima 20', fg = BLUE1, bg = BLUE0, text = f'                         📍{players_info[num][0]}                         ').pack(padx = 2, pady = 2)
+    Label(players_dashboard[num], font = 'optima 20', fg = BLUE1, bg = BLUE0, text = f'                         📍{property_name[players_info[num][0]]}                         ').pack(padx = 2, pady = 2)
     f = Frame(players_dashboard[num], bg = BLUE0)
     f.pack(padx = 2, pady = 2)
     Label(f, font = 'aharoni 15', fg = BLUE1, bg = BLUE0, text = '                              PROPERTIES                              ').pack(padx = 2, pady = 2)
@@ -324,26 +312,70 @@ def packDashboard(num, can_sell):
                 inSet = True
                 break
         if inSet:
-            b.create_text(140.5, 13, font = 'optima 15 bold', fill = '#fad852', text = f'{"🔴" if property_state[i] == 5 else "🟢"*property_state[i]}  {property_name[i]}')
-            #make buy button here, similar queue, check() function in playerModule, update dashboard first and ignore delay
-            buy_button = Button(b, height=1, font='optima 10', text="Upgrade", highlightthickness=0, highlightbackground=BLUE1, command=lambda x=i: placeBuyOrder(x))
+            if property_state[i] == 6:
+                buildings = "🔴"
+            elif property_state[i] > 1:
+                buildings = f"🟢x{property_state[i] - 1}"
+            else:
+                buildings = ""
+            b.create_text(140.5, 13, font='optima 15 bold', text=f'{buildings}  {property_name[i]}', fill='#fad852')
+            buy_button = Button(b, height=1, font='optima 10', width=3, text="Upgrade", highlightthickness=0, highlightbackground=BLUE1, command=lambda x=i: upgradeProperty(x))
             buy_button.place(x=2, y=2)
         else:
             b.create_text(140.5, 13, font = 'optima 15', fill = WHITE, text = f'{property_name[i]}')
         if can_sell:
-            sell_button = Button(b, height=1, font = 'optima 10', text="Sell", highlightthickness=0, highlightbackground=BLUE1, command=lambda x = i: placeSellOrder(x))
+            sell_button = Button(b, height=1, font = 'optima 10', text="Sell", highlightthickness=0, highlightbackground=BLUE1, command=lambda x = i: sellProperty(x))
             sell_button.place(x=223, y=2)
 
-sell_queue = []
-def placeSellOrder(property):
-    global sell_queue
-    sell_queue.append(property)
+def mortgagePopup():
+    m_scr = Tk()
+    m_scr.config(bg=BLUE1)
+    m_scr.geometry("350x100")
+    m_scr.title("You can't pay!")
+    center(m_scr)
+    Label(m_scr, text="You don't have enough to pay!\nSell some properties to continue.", font="optima 20", fg=BLUE2, bg=BLUE1).place(anchor="center", x=175, y=50)
+    m_scr.update()
+    return m_scr
 
-delayed_players = []
-def placeBuyOrder(property):
-    global delayed_players
-    if not property_owner[property] in delayed_players:
-        delayed_players.append(property_owner[property])
+def sellProperty(property):
+    if property_state[property] == 0:
+        players_info[property_owner[property]][1] += property_purchase_price[property]
+        players_info[property_owner[property]][2].remove(property)
+        property_state[property] = -2
+        property_owner[property] = -1
+    else:
+        if property < 10:
+            players_info[property_owner[property]][1] += 25
+        elif property < 20:
+            players_info[property_owner[property]][1] += 50
+        elif property < 30:
+            players_info[property_owner[property]][1] += 100
+        else:
+            players_info[property_owner[property]][1] += 200
+        property_state[property] -= 1
+
+def upgradeProperty(property):
+    for i in color_sets[color_set_index[property]]:
+        if property_state[i] < property_state[property]:
+            popup("You must build evenly.")
+            return
+    if property_state[property] == 6:
+        popup("This property has already been fully upgraded.")
+        return
+    if property < 10:
+        price = 25
+    elif property < 20:
+        price = 50
+    elif property < 30:
+        price = 100
+    else:
+        price = 200
+    if players_info[property_owner[property]][1] < price:
+        popup(f"You don't have enough to pay for this upgrade (${price}).")
+    else:
+        players_info[property_owner[property]][1] -= price
+        property_state[property] += 1
+        updateDashboard(property_owner[property])
 
 #################### TK ####################
 
