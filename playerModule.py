@@ -191,6 +191,11 @@ class Player:
                 print(f"Property has been transferred to player {players.index(self)}")
                 property_state[space] = 0
                 players_info[self.player_num][2].append(space)
+                for p in color_sets[color_set_index[space]]:
+                    if p not in players_info[self.player_num][2]:
+                        return
+                players_info[self.player_num][3].append(color_sets[color_set_index[space]])
+
 
     def drawChance(self):
         global players

@@ -26,6 +26,7 @@ def turn(player):
     gui.updateDashboard(player.player_num)
     # player.purchaseBuildings()
 
+
 gui.updateWindow('menu')
 while gui.LOCATION != 'board':
      gui.scr.update()
