@@ -44,9 +44,7 @@ class Player:
         gui.displayRoll(dice1, dice2)
         if dice1 != dice2 or double_count > 2:
             gui.dice_screen.withdraw()
-        print(f"Rolled {dice1} and {dice2}")
         roll = past_roll + dice1 + dice2
-        print("The roll is now " + str(roll))
         if dice1 == dice2:
             if players_info[self.player_num][0] == 40:
                 players_info[self.player_num][0] = 10
@@ -59,12 +57,9 @@ class Player:
                 else:
                     return self.rollDice(roll, double_count)
         elif players_info[self.player_num][0] == 40:
-            print("Stay in jail")
             return None
-        print("Rolled")
         gui.msg(f"{self.player_name} rolled a {roll}.")
         self.move(roll)
-        print(players_info[self.player_num][0])
         gui.msg(f"{self.player_name} landed on {property_name[players_info[self.player_num][0]]}.")
         return roll
 
@@ -188,7 +183,6 @@ class Player:
                         return
                 gui.msg(f"{self.player_name} has bought {property_name[space]} for ${price}. \n{self.player_name} now has ${players_info[self.player_num][1]}.")
                 property_owner[space] = self.player_num
-                print(f"Property has been transferred to player {players.index(self)}")
                 property_state[space] = 0
                 players_info[self.player_num][2].append(space)
                 for p in color_sets[color_set_index[space]]:
