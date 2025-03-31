@@ -94,6 +94,9 @@ def updateWindow(location):
     subtitle.place_forget()
     m_play.place_forget()
 
+    topBar.pack_forget()
+    setupFrame.pack_forget()
+    setupSpacer.pack_forget()
     for i in range(5):
         players_label[i].grid_forget()
         players_openfile[i].grid_forget()
@@ -119,12 +122,15 @@ def updateWindow(location):
         m_play.place(anchor=CENTER, x=400, y=500)
 
     if location == 'setup':
+        topBar.pack()
+        setupFrame.pack(side = LEFT)
+        setupSpacer.pack(side = BOTTOM, expand = True)
         for i in range(5):
-            players_label[i].grid(row=i, column=0)
+            players_label[i].grid(row=i, column=0, padx = 10, pady = 5)
             players_openfile[i].grid(row = i, column = 1)
             players_selectcolor[i].grid(row = i, column = 2)
 
-        s_play.place(anchor=CENTER, x=400, y=500)
+        s_play.place(anchor=CENTER, x=400, y=700)
         tip.grid(row = 5, column = 0)
 
     if location == 'board':
@@ -342,7 +348,7 @@ scr.protocol('WM_DELETE_WINDOW', exitProgram)
 
 ### title & subtitle ###
 
-title = Label(scr, bg=BLUE0, fg=BLUE1, text='NOMOLOPY', font='arial 80 bold')
+title = Label(scr, bg=BLUE0, fg=BLUE1, text=' NOMOLOPY ', font='arial 80 bold')
 subtitle = Label(scr, bg=BLUE0, fg=BLUE1, text='~ Very Original, est. 2024 ~', font='optima 40 italic')
 
 ### buttons ###
@@ -351,6 +357,9 @@ m_play = Button(scr, bg=BLUE1, fg=BLUE2, text='PLAY', font='aharoni 60', command
 
 #################### SETUP MENU ####################
 
+topBar = Label(scr, bg = BLUE0, fg = BLUE1, width = 30, font = 'arial 50 bold', text = 'GAME SETUP')
+setupFrame = Frame(scr, bg = BLUE1)
+setupSpacer = Label(scr, bg = BLUE1, height = 10, text = ' ')
 
 players_name = [StringVar(scr, '') for i in range(5)]
 players_label = []
@@ -361,13 +370,13 @@ players_color = [RED, GREEN, BLUE, YELLOW, PINK]
 players_token = []
 players_info = [[None] * 5 for i in range(5)]
 for i in range(5):
-    players_label.append(Entry(scr, width=10, fg = players_color[i], bg=BLUE0, textvariable=players_name[i], font='optima 50 italic bold', highlightbackground=BLUE1))
-    players_openfile.append(Button(scr, text = 'Import token', command = lambda x = i: importFile(x), highlightbackground=BLUE1))
-    players_selectcolor.append(Button(scr, text = 'Change color', command = lambda x = i: changePlayerColor(x), highlightbackground=BLUE1))
+    players_label.append(Entry(setupFrame, width=10, fg = players_color[i], bg=BLUE0, textvariable=players_name[i], font='optima 50 italic bold', highlightbackground=BLUE1))
+    players_openfile.append(Button(setupFrame, text = 'Import token', command = lambda x = i: importFile(x), highlightbackground=BLUE1))
+    players_selectcolor.append(Button(setupFrame, text = 'Change color', command = lambda x = i: changePlayerColor(x), highlightbackground=BLUE1))
 
 s_play = Button(scr, bg=BLUE1, fg=BLUE2, text='PLAY', font='aharoni 60', command=lambda: updateAnimation('board', 1), highlightbackground=BLUE1)
 
-tip = Label(scr, bg = BLUE1, fg = RED, text = 'Tip: d̷͚͋ȯ̸ͅ ̸̨̍n̷͕͂o̴̬͂t̴̬͠ ̷̥͝n̷̙͐a̴͉̍ṃ̷͝e̸̥̔ ̴͓̉ÿ̵͈o̸̟͒u̶͚̅r̷̗̒ ̶̉͜p̷̻͘ļ̸͝ā̶͕y̸͠ͅë̴͚ȓ̵̫ C̵̢̨̧̧̡̻̗̩͎͇̩̠̗̫͉̬͔͕͖͈̠͖̥̙̭̝̣̱̗̜͔̙͚̜̟͇̔̽̇̽́Ŗ̷͔̳͈͗̄͑̽͂͛̓̂̈́̌̎͌̐͑͂̾̅̑̎̏͂̿́͒̏̏͋͐͛͑͑̆̂̅͝͝͝A̴̗͓̟̱̘͓̻̙̞̪͖̙̗͋͗̏̒͂̏̀̄͒̌̎̂̑̀͊̀̉̃̀̆́͆͂̀̎̄̑̂̔͒̈́͝͠͝N̸̨͍̗̹̤̳̼̯̦̗͕͙̅̊͒͊̇̒̈́̓͊͝E̸̴̴̡̢̧̢̧̡̛͉̤͓̞͙̪̫̪͖̬̻̣̰̠͚̻̗̮̲̱̫̩̼̼̟̬̪͔̜͔̘̤̼̝̰̼̥̘̗̦͖̹̱̝̰͈̜̿̆̅͆̓̆̇͗̊̓̾̑̋̈́̀͗͛̿̀̈́̇̓́̄͌̃̋̅͂̊̃͒́͒́̇͑͊̏̑̀̇͗̌͌̌́͊͗̐̂͗͛͆̀͆̎̊̉̾̍̾̑̔̍̀̽̉̈́̐́͐̅͗̕͝͝͝͝͝.', font = 'optima 10 italic')
+tip = Label(setupFrame, bg = BLUE1, fg = RED, text = 'Tip: d̷͚͋ȯ̸ͅ ̸̨̍n̷͕͂o̴̬͂t̴̬͠ ̷̥͝n̷̙͐a̴͉̍ṃ̷͝e̸̥̔ ̴͓̉ÿ̵͈o̸̟͒u̶͚̅r̷̗̒ ̶̉͜p̷̻͘ļ̸͝ā̶͕y̸͠ͅë̴͚ȓ̵̫ C̵̢̨̧̧̡̻̗̩͎͇̩̠̗̫͉̬͔͕͖͈̠͖̥̙̭̝̣̱̗̜͔̙͚̜̟͇̔̽̇̽́Ŗ̷͔̳͈͗̄͑̽͂͛̓̂̈́̌̎͌̐͑͂̾̅̑̎̏͂̿́͒̏̏͋͐͛͑͑̆̂̅͝͝͝A̴̗͓̟̱̘͓̻̙̞̪͖̙̗͋͗̏̒͂̏̀̄͒̌̎̂̑̀͊̀̉̃̀̆́͆͂̀̎̄̑̂̔͒̈́͝͠͝N̸̨͍̗̹̤̳̼̯̦̗͕͙̅̊͒͊̇̒̈́̓͊͝E̸̴̴̡̢̧̢̧̡̛͉̤͓̞͙̪̫̪͖̬̻̣̰̠͚̻̗̮̲̱̫̩̼̼̟̬̪͔̜͔̘̤̼̝̰̼̥̘̗̦͖̹̱̝̰͈̜̿̆̅͆̓̆̇͗̊̓̾̑̋̈́̀͗͛̿̀̈́̇̓́̄͌̃̋̅͂̊̃͒́͒́̇͑͊̏̑̀̇͗̌͌̌́͊͗̐̂͗͛͆̀͆̎̊̉̾̍̾̑̔̍̀̽̉̈́̐́͐̅͗̕͝͝͝͝͝.', font = 'optima 10 italic')
 
 #################### GAME BOARD ####################
 
