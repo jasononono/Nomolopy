@@ -141,13 +141,13 @@ class Player:
             if space in railroads:
                 railroad_count = 0
                 for i in range(4):
-                    if (5 + 10 * i) in players[property_owner[space]].owned_properties:
+                    if (5 + 10 * i) in players_info[property_owner[space]][2]:
                         railroad_count += 1
                 rent = property_rent[space][railroad_count - 1]
             elif space in utilities:
                 utility_count = 0
                 for space in utilities:
-                    if space in players[property_owner[space]].owned_properties:
+                    if space in players_info[property_owner[space]][2]:
                         utility_count += 1
                 d1, d2 = random.randint(1, 6), random.randint(1, 6)
                 gui.dice_screen.deiconify()
@@ -294,7 +294,7 @@ class Player:
                     return
             for i in range(len(players)):
                 if i != self.player_num:
-                    players[i].money += 50
+                    players_info[i][1] += 50
         else:
             cost, houses, hotels = self.buildingRepairs(25, 100)
             gui.msg(f"General repairs! {self.player_name} has to pay ${cost} for {houses} houses and {hotels} hotels.")
@@ -374,11 +374,11 @@ class Player:
             gui.msg(f"It's {self.player_name}'s birthday! Every player pays them $10.")
             for player in players:
                 if player != self:
-                    if player.money >= 10:
-                        player.money -= 10
+                    if players_info[player.player_num][1] >= 10:
+                        players_info[player.player_num][1] -= 10
                     else:
                         if player.mortgageOrSell(10) == 1:
-                            player.money -= 10
+                            players_info[player.player_num][1] -= 10
                         else:
                             player.bankrupt()
                             return
