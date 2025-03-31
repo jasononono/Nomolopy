@@ -89,6 +89,7 @@ def updateWindow(location):
     global scr, title, subtitle, m_play
     global players_label, players_tokenImg, players_name, players_openfile, players_token, players_dashboard, players_selectcolor
     global tiles_bd, tiles_obj, tiles_frame, tiles_label, mainDialogue, dashboardButton
+    global movementSpd, dialogueSpd
 
     title.place_forget()
     subtitle.place_forget()
@@ -97,6 +98,10 @@ def updateWindow(location):
     topBar.pack_forget()
     setupFrame.pack_forget()
     setupSpacer.pack_forget()
+    dialogueSliderTxt.grid_forget()
+    movementSliderTxt.grid_forget()
+    dialogueSlider.grid_forget()
+    movementSlider.grid_forget()
     for i in range(5):
         players_label[i].grid_forget()
         players_openfile[i].grid_forget()
@@ -124,7 +129,12 @@ def updateWindow(location):
     if location == 'setup':
         topBar.pack()
         setupFrame.pack(side = LEFT)
-        setupSpacer.pack(side = BOTTOM, expand = True)
+        setupSpacer.pack(side = BOTTOM)
+        dialogueSliderTxt.grid(row = 0, column = 0)
+        movementSliderTxt.grid(row = 0, column = 1)
+        dialogueSlider.grid(row = 1, column = 0)
+        movementSlider.grid(row = 1, column = 1)
+        
         for i in range(5):
             players_label[i].grid(row=i, column=0, padx = 10, pady = 5)
             players_openfile[i].grid(row = i, column = 1)
@@ -141,6 +151,10 @@ def updateWindow(location):
             if players_tokenImg[i] != '':
                 img = players_tokenImg[i]
             players_token.append(Label(scr, bd = 2, bg = players_color[i], image = img))
+
+        dialogueSpd = (100 - dialogueSlider.get()) * 50 + 1
+        movementSpd = (100 - movementSlider.get()) + 1
+            
         title.place(anchor=CENTER, x=400, y=380)
         subtitle.place(anchor=CENTER, x=400, y=450)
         for i in range(40):
@@ -200,11 +214,10 @@ def moveToken(token, start, end):
             pos = [scatter(600), scatter(200)]
         else:
             pos = [scatter(pos[rem + 1]), scatter(pos[rem])]
-        
-        SPEED = 100
-        spd = [(pos[0] - start[0]) / SPEED, (pos[1] - start[1]) / SPEED]
+
+        spd = [(pos[0] - start[0]) / movementSpd, (pos[1] - start[1]) / movementSpd]
         currentPos = start.copy()
-        for i in range(SPEED):
+        for i in range(movementSpd):
             players_token[token].place(anchor = CENTER, x = currentPos[0] + spd[0], y = currentPos[1] + spd[1])
             currentPos = [currentPos[0] + spd[0], currentPos[1] + spd[1]]
             scr.update()
@@ -221,7 +234,7 @@ def msg(m):
     scr.update()
     # for i in range(20000):
     #     scr.update()
-    scr.after(1000)
+    scr.after(dialogueSpd)
 
 def omniousMsg(m, pause):
     global mainDialogue
@@ -229,13 +242,13 @@ def omniousMsg(m, pause):
     mainDialogue.config(fg = RED)
     scr.update()
     if pause:
-        scr.after(1000)
+        scr.after(dialogueSpd)
 
 def alterAns(ans):
     global queryAns
     queryAns = ans
 
-def center(win, x_offset = 0, y_offset = 0): #center a window
+def center(win, x_offset, y_offset): #center a window
     win.update_idletasks()
     width = win.winfo_width()
     frm_width = win.winfo_rootx() - win.winfo_x()
@@ -256,13 +269,12 @@ def popup(msg, options = ['OK']):
     window.title('Query')
     # window.geometry('{}x{}+{}+{}'.format(600, 200, 0, 0))
     window.geometry('600x200')
-    center(window)
-    window.config(bg=BLUE1)
-    Label(window, text = msg, font = 'optima 20', fg=BLUE2, bg=BLUE1).place(anchor = CENTER, x = 300, y = 50)
+    center(window, 0, 0)
+    Label(window, text = msg, font = 'optima 20').place(anchor = CENTER, x = 300, y = 50)
     f = Frame(window)
     f.pack(side = BOTTOM, pady = 20)
     for i in options:
-        Button(f, text = i, height = 2, highlightbackground=BLUE1, command = lambda x = i: alterAns(x)).pack(side = RIGHT)
+        Button(f, text = i, height = 2, command = lambda x = i: alterAns(x)).pack(side = RIGHT)
     while queryAns is None:
         scr.update()
         window.update()
@@ -286,7 +298,7 @@ def openDashboard(fixedState = None):
             players_dashboard[-1].config(bg = BLUE1, padx = 2, pady = 2)
             players_dashboard[-1].resizable(False, False)
     for i in range(len(players_dashboard)):
-        packDashboard(i, False)
+        packDashboard(i)
 
 def exitProgram():
     query = messagebox.askyesno('Caution!', 'Are you sure you want to exit the program?\nYour game\'s progress will be lost.')
@@ -294,101 +306,53 @@ def exitProgram():
         scr.destroy()
         exit()
 
-def updateDashboard(num = None, can_sell = False):
-    global players_dashboard
-    if len(players_dashboard) > 0:
-        packDashboard(num, can_sell)
+def updateDashboard(num = None, pos = None, money = None, properties = None, sets = None, jailCard = None):
+    global players_info
 
-def packDashboard(num, can_sell):
+    if pos is not None:
+        players_info[num][0] = pos
+    if money is not None:
+        players_info[num][1] = money
+    if properties is not None:
+        players_info[num][2] = properties
+    if sets is not None:
+        players_info[num][3] = sets
+    if jailCard is not None:
+        players_info[num][4] = jailCard
+        
+    if len(players_dashboard) > 0:
+        packDashboard(num)
+
+def packDashboard(num):
     global players_dashboard
     for widget in players_dashboard[num].winfo_children():
         widget.destroy()
     Label(players_dashboard[num], font = 'optima 30', fg = BLUE1, bg = BLUE0, text = f'                    💵 {players_info[num][1]}                    ').pack(padx = 2, pady = 2)
-    Label(players_dashboard[num], font = 'optima 20', fg = BLUE1, bg = BLUE0, text = f'                         📍{property_name[players_info[num][0]]}                         ').pack(padx = 2, pady = 2)
+    Label(players_dashboard[num], font = 'optima 20', fg = BLUE1, bg = BLUE0, text = f'                         📍{players_info[num][0]}                         ').pack(padx = 2, pady = 2)
     f = Frame(players_dashboard[num], bg = BLUE0)
     f.pack(padx = 2, pady = 2)
     Label(f, font = 'aharoni 15', fg = BLUE1, bg = BLUE0, text = '                              PROPERTIES                              ').pack(padx = 2, pady = 2)
     for i in sorted(players_info[num][2]):
-        b = Canvas(f, bg = tiles_colour[i], width=280, height=26, highlightthickness=0)
-        b.pack(padx = 4)
-        b.create_rectangle(1, 1, 279, 25, fill=BLUE1, outline=tiles_colour[i], width=2)
+        b = Frame(f, bg = tiles_colour[i])
+        b.pack(padx = 4, pady = 2)
         inSet = False
         for s in players_info[num][3]:
             if i in s:
                 inSet = True
                 break
         if inSet:
-            if property_state[i] == 6:
-                buildings = "🔴"
-            elif property_state[i] > 1:
-                buildings = f"🟢x{property_state[i] - 1}"
-            else:
-                buildings = ""
-            b.create_text(140.5, 13, font='optima 15 bold', text=f'{buildings}  {property_name[i]}', fill='#fad852')
-            buy_button = Button(b, height=1, font='optima 10', width=3, text="Upgrade", highlightthickness=0, highlightbackground=BLUE1, command=lambda x=i: upgradeProperty(x))
-            buy_button.place(x=2, y=2)
+            Label(b, font = 'optima 15 bold', fg = '#fad852', bg = BLUE1, text = f'                                  {"🔴" if property_state[i] == 5 else "🟢"*property_state[i]}  {property_name[i]}                                        ').pack(padx = 2, pady = 2)
         else:
-            b.create_text(140.5, 13, font = 'optima 15', fill = WHITE, text = f'{property_name[i]}')
-        if can_sell:
-            sell_button = Button(b, height=1, font = 'optima 10', text="Sell", highlightthickness=0, highlightbackground=BLUE1, command=lambda x = i: sellProperty(x))
-            sell_button.place(x=223, y=2)
+            Label(b, font = 'optima 15', fg = WHITE, bg = BLUE1, text = f'                                        {property_name[i]}                                        ').pack(padx = 2, pady = 2)
 
-def mortgagePopup():
-    m_scr = Tk()
-    m_scr.config(bg=BLUE1)
-    m_scr.geometry("350x100")
-    m_scr.title("You can't pay!")
-    center(m_scr)
-    Label(m_scr, text="You don't have enough to pay!\nSell some properties to continue.", font="optima 20", fg=BLUE2, bg=BLUE1).place(anchor="center", x=175, y=50)
-    m_scr.update()
-    return m_scr
 
-def sellProperty(property):
-    if property_state[property] == 0:
-        players_info[property_owner[property]][1] += property_purchase_price[property]
-        players_info[property_owner[property]][2].remove(property)
-        property_state[property] = -2
-        property_owner[property] = -1
-    else:
-        if property < 10:
-            players_info[property_owner[property]][1] += 25
-        elif property < 20:
-            players_info[property_owner[property]][1] += 50
-        elif property < 30:
-            players_info[property_owner[property]][1] += 100
-        else:
-            players_info[property_owner[property]][1] += 200
-        property_state[property] -= 1
-
-def upgradeProperty(property):
-    for i in color_sets[color_set_index[property]]:
-        if property_state[i] < property_state[property]:
-            popup("You must build evenly.")
-            return
-    if property_state[property] == 6:
-        popup("This property has already been fully upgraded.")
-        return
-    if property < 10:
-        price = 25
-    elif property < 20:
-        price = 50
-    elif property < 30:
-        price = 100
-    else:
-        price = 200
-    if players_info[property_owner[property]][1] < price:
-        popup(f"You don't have enough to pay for this upgrade (${price}).")
-    else:
-        players_info[property_owner[property]][1] -= price
-        property_state[property] += 1
-        updateDashboard(property_owner[property])
 
 #################### TK ####################
 
 
 scr = Tk()
 scr.geometry('800x800')
-center(scr)
+center(scr, 0, 0)
 scr.title(' NOMOLOPY ')
 scr.resizable(False, False)
 scr.protocol('WM_DELETE_WINDOW', exitProgram)
@@ -408,7 +372,17 @@ m_play = Button(scr, bg=BLUE1, fg=BLUE2, text='PLAY', font='aharoni 60', command
 
 topBar = Label(scr, bg = BLUE0, fg = BLUE1, width = 30, font = 'arial 50 bold', text = 'GAME SETUP')
 setupFrame = Frame(scr, bg = BLUE1)
-setupSpacer = Label(scr, bg = BLUE1, height = 10, text = ' ')
+setupSpacer = Frame(scr, bg = BLUE1)
+
+dialogueSliderTxt = Label(setupSpacer, text = 'Dialogue Speed')
+movementSliderTxt = Label(setupSpacer, text = 'Movement Speed')
+dialogueSlider = Scale(setupSpacer, from_ = 0, to = 100, orient = HORIZONTAL)
+movementSlider = Scale(setupSpacer, from_ = 0, to = 100, orient = HORIZONTAL)
+
+dialogueSpd = 1000
+movementSpd = 100
+dialogueSlider.set(75)
+movementSlider.set(50)
 
 players_name = [StringVar(scr, '') for i in range(5)]
 players_label = []
@@ -417,6 +391,7 @@ players_selectcolor = []
 players_tokenImg = [''] * 5
 players_color = [RED, GREEN, BLUE, YELLOW, PINK]
 players_token = []
+players_info = [[None] * 5 for i in range(5)]
 for i in range(5):
     players_label.append(Entry(setupFrame, width=10, fg = players_color[i], bg=BLUE0, textvariable=players_name[i], font='optima 50 italic bold', highlightbackground=BLUE1))
     players_openfile.append(Button(setupFrame, text = 'Import token', command = lambda x = i: importFile(x), highlightbackground=BLUE1))
@@ -496,12 +471,12 @@ def displayRoll(d1, d2):
         displayDice(dice1, randint(1, 6))
         displayDice(dice2, randint(1, 6))
         dice_screen.update()
-        speed -= 0.5
+        speed -= 0.5 * dialogueSpd / (dialogueSpd - 0.996)
     dice_screen.after(500)
     displayDice(dice1, d1)
     displayDice(dice2, d2)
     dice_screen.update()
-    dice_screen.after(1000)
+    dice_screen.after(dialogueSpd)
 
 dice_screen = Tk()
 dice_screen.title("Roll the Dice")
