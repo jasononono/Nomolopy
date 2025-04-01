@@ -332,6 +332,7 @@ def packDashboard(num):
     f = Frame(players_dashboard[num], bg = BLUE0)
     f.pack(padx = 2, pady = 2)
     Label(f, font = 'aharoni 15', fg = BLUE1, bg = BLUE0, text = '                              PROPERTIES                              ').pack(padx = 2, pady = 2)
+    print(num, players_info[num])
     for i in sorted(players_info[num][2]):
         b = Frame(f, bg = tiles_colour[i])
         b.pack(padx = 4, pady = 2)
