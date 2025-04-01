@@ -288,7 +288,7 @@ def exitProgram():
         scr.destroy()
         exit()
 
-def updateDashboard(num = None, can_sell = False):
+def updateDashboard(num, can_sell = False):
     global players_dashboard
     if len(players_dashboard) > 0:
         packDashboard(num, can_sell)
@@ -302,7 +302,6 @@ def packDashboard(num, can_sell):
     f = Frame(players_dashboard[num], bg = BLUE0)
     f.pack(padx = 2, pady = 2)
     Label(f, font = 'aharoni 15', fg = BLUE1, bg = BLUE0, text = '                              PROPERTIES                              ').pack(padx = 2, pady = 2)
-    print(num, players_info[num])
     for i in sorted(players_info[num][2]):
         b = Canvas(f, bg = tiles_colour[i], width=280, height=26, highlightthickness=0)
         b.pack(padx = 4)

@@ -12,7 +12,6 @@ def setup():
         players_info[i][2] = []
         players_info[i][3] = []
         players_info[i][4] = False
-        print(players_info[i])
 
 def turn(player):
     if not player.loop:
