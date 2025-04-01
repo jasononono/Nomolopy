@@ -12,6 +12,7 @@ def setup():
         players_info[i][2] = []
         players_info[i][3] = []
         players_info[i][4] = False
+        print(players_info[i])
 
 def turn(player):
     if not player.loop:
@@ -29,11 +30,11 @@ def turn(player):
 
 gui.updateWindow('menu')
 while gui.LOCATION != 'board':
-     gui.scr.update()
+    gui.scr.update()
 
 setup()
 while len(players) > 1:
-     gui.scr.update()
-     turn(players[player_turn])
-     player_turn = (player_turn + 1) % len(players)
+    gui.scr.update()
+    turn(players[player_turn])
+    player_turn = (player_turn + 1) % len(players)
 
