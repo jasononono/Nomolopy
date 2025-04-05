@@ -187,6 +187,8 @@ class Player:
                 for p in color_sets[color_set_index[space]]:
                     if p not in players_info[self.player_num][2]:
                         return
+                for p in color_sets[color_set_index[space]]:
+                    property_state[p] = 1
                 players_info[self.player_num][3].append(color_sets[color_set_index[space]])
 
 
