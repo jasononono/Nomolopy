@@ -215,9 +215,9 @@ def moveToken(token, start, end):
         else:
             pos = [scatter(pos[rem + 1]), scatter(pos[rem])]
 
-        spd = [(pos[0] - start[0]) / movementSpd, (pos[1] - start[1]) / movementSpd]
+        spd = [(pos[0] - start[0]) / movementSpd ** 2, (pos[1] - start[1]) / movementSpd ** 2]
         currentPos = start.copy()
-        for i in range(movementSpd):
+        for i in range(movementSpd ** 2):
             players_token[token].place(anchor = CENTER, x = currentPos[0] + spd[0], y = currentPos[1] + spd[1])
             currentPos = [currentPos[0] + spd[0], currentPos[1] + spd[1]]
             scr.update()
