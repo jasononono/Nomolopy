@@ -1,7 +1,6 @@
 import random
 from data import *
 import gui
-from tkinter import *
 
 players = []
 player_turn = 0
