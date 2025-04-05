@@ -283,10 +283,12 @@ def popup(msg, options = ['OK']):
     return queryAns
 
 def openDashboard(fixedState = None):
-    global players_dashboard
+    global players_dashboard, dashboardState
     state = False
-    if fixedState == True or (fixedState is not False and len(players_dashboard) == 0):
+    dashboardState = False
+    if fixedState or (fixedState is not False and len(players_dashboard) == 0):
         state = True
+        dashboardState = True
         
     for i in players_dashboard:
         i.destroy()
@@ -485,6 +487,7 @@ queryAns = None
 ### dashboards ###
 
 players_dashboard = []
+dashboardState = False
 dashboardButton = Button(scr, text = 'Dashboards', font = 'optima 30', command = openDashboard, highlightbackground=BLUE0)
 
 #################### OTHER STUFF ####################
