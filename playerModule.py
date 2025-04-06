@@ -435,8 +435,8 @@ class Player:
     def bankrupt(self):
         global players
         gui.msg(f"{self.player_name} has been bankrupted!")
-        players[players.index(self)] = None
         for property in players_info[self.player_num][2]:
             property_state[property] = -2
             property_state[property] = -1
         self.loop = False
+        players[players.index(self)] = None
