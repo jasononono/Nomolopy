@@ -50,6 +50,7 @@ class Player:
             else:
                 double_count += 1
                 if double_count >= 3:
+                    gui.dice_screen.withdraw()
                     gui.msg("You rolled 3 doubles in a row. Go to jail.")
                     self.goToJail()
                     return None
@@ -160,8 +161,9 @@ class Player:
             elif space in utilities:
                 utility_count = 0
                 for space in utilities:
-                    if space in players_info[property_owner[space]][2]:
-                        utility_count += 1
+                    if property_owner[space] >= 0:
+                        if space in players_info[property_owner[space]][2]:
+                            utility_count += 1
                 d1, d2 = random.randint(1, 6), random.randint(1, 6)
                 gui.dice_screen.deiconify()
                 gui.displayRoll(d1, d2)
