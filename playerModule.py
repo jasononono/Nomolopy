@@ -33,7 +33,7 @@ class Player:
 
     def rollDice(self, past_roll, double_count):
         gui.dice_screen.deiconify()
-        gui.dice_screen.attributes("-topmost", True)
+        gui.dice_screen.lift()
         gui.center(gui.dice_screen, 0, -50)
         if self.isCrane and random.randint(1, 4) <= 3:
             dice1, dice2 = craneBias(players_info[self.player_num][0])
@@ -87,6 +87,8 @@ class Player:
     def mortgageOrSell(self, amount):
         #UI import
         m_win = gui.mortgagePopup()
+        if not gui.dashboardState:
+            gui.openDashboard()
         while players_info[self.player_num][2] and players_info[self.player_num][1] < amount:
             gui.updateDashboard(num=self.player_num, can_sell=True)
             previous_money = players_info[self.player_num][1]
@@ -99,8 +101,6 @@ class Player:
         else:
             return 1
 
-
-
     def spaceAction(self, space, players):
         if space == 30:
             self.goToJail()
@@ -110,11 +110,25 @@ class Player:
             self.drawChance()
         # Taxes
         elif space == 4:
-            gui.msg(f"{self.player_name} paid $200.")
-            players_info[self.player_num][1] -= 200
+            if players_info[self.player_num][1] >= 200:
+                players_info[self.player_num][1] -= 200
+                gui.msg(f"{self.player_name} paid $200.")
+            else:
+                if self.mortgageOrSell(200) == -1:
+                    self.bankrupt()
+                else:
+                    players_info[self.player_num][1] -= 200
+                    gui.msg(f"{self.player_name} paid $200.")
         elif space == 38:
-            gui.msg(f"{self.player_name} paid $100.")
-            players_info[self.player_num][1] -= 100
+            if players_info[self.player_num][1] >= 100:
+                players_info[self.player_num][1] -= 100
+                gui.msg(f"{self.player_name} paid $200.")
+            else:
+                if self.mortgageOrSell(100) == -1:
+                    self.bankrupt()
+                else:
+                    players_info[self.player_num][1] -= 100
+                    gui.msg(f"{self.player_name} paid $200.")
         elif space in null_space or space in players_info[self.player_num][2]:
             pass
         elif space == 40:
@@ -163,7 +177,7 @@ class Player:
                 players_info[self.player_num][1] -= rent
                 gui.msg(f"{self.player_name} paid ${str(rent)} to {players[property_owner[space]].player_name}.")
             else:
-                if self.mortgageOrSell(rent - players_info[self.player_num][1]) == -1:
+                if self.mortgageOrSell(rent) == -1:
                     self.bankrupt()
                 else:
                     players_info[self.player_num][1] -= rent
@@ -187,6 +201,8 @@ class Player:
                 for p in color_sets[color_set_index[space]]:
                     if p not in players_info[self.player_num][2]:
                         return
+                for p in color_sets[color_set_index[space]]:
+                    property_state[p] = 1
                 players_info[self.player_num][3].append(color_sets[color_set_index[space]])
 
 
