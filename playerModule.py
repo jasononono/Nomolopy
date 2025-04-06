@@ -32,9 +32,6 @@ class Player:
         self.isCrane = 'crane' in self.player_name.lower()
 
     def rollDice(self, past_roll, double_count):
-        gui.dice_screen.deiconify()
-        gui.dice_screen.lift()
-        gui.center(gui.dice_screen, 0, -50)
         if self.isCrane and random.randint(1, 4) <= 3:
             dice1, dice2 = craneBias(players_info[self.player_num][0])
         else:
@@ -423,20 +420,20 @@ class Player:
         total_cost = 0
         house_count = 0
         hotel_count = 0
-        for property in players_info[self.player_num][2]:
-            if property_state[property] == 5:
+        for p in players_info[self.player_num][2]:
+            if property_state[p] == 5:
                 total_cost += hotel_p
                 hotel_count += 1
-            elif property_state[property] > 0:
-                total_cost += property_state[property]*house_p
-                house_count += property_state[property]
+            elif property_state[p] > 0:
+                total_cost += property_state[p]*house_p
+                house_count += property_state[p]
         return total_cost, house_count, hotel_count
 
     def bankrupt(self):
         global players
         gui.msg(f"{self.player_name} has been bankrupted!")
         players[players.index(self)] = None
-        for property in players_info[self.player_num][2]:
-            property_state[property] = -2
-            property_state[property] = -1
+        for p in players_info[self.player_num][2]:
+            property_state[p] = -2
+            property_state[p] = -1
         self.loop = False

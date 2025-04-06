@@ -2,6 +2,7 @@ from data import *
 from playerModule import Player, gui, player_turn, players
 
 
+
 def setup():
     num_players, player_names= gui.getPlayers()
     for i in range(num_players):

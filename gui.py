@@ -12,6 +12,9 @@ from data import *
 
 #################### COLOUR PALETTE ####################
 
+TESTING_MODE = False
+SAY_YES_TO_EVERYTHING = False
+
 
 BLUE0 = '#ceddf5'
 BLUE1 = '#99baf0'
@@ -152,8 +155,12 @@ def updateWindow(location):
                 img = players_tokenImg[i]
             players_token.append(Label(scr, bd = 2, bg = players_color[i], image = img))
 
-        dialogueSpd = (100 - dialogueSlider.get()) * 50 + 1
-        movementSpd = movementSlider.get() ** 3 / 5000 + 1
+        if TESTING_MODE:
+            dialogueSpd = 1
+            movementSpd = 10000
+        else:
+            dialogueSpd = (100 - dialogueSlider.get()) * 50 + 1
+            movementSpd = movementSlider.get() ** 3 / 5000 + 1
 
         title.place(anchor=CENTER, x=400, y=380)
         subtitle.place(anchor=CENTER, x=400, y=450)
@@ -233,6 +240,9 @@ def getPlayers():
 
 def msg(m):
     global mainDialogue
+    if TESTING_MODE:
+        print(m)
+        return
     mainDialogue.config(fg = BLUE2)
     mainDialogue.config(text = m)
     scr.update()
@@ -268,6 +278,12 @@ def center(win, x_offset = 0, y_offset = 0): #center a window
 def popup(msg, options = ['OK']):
     global scr, queryAns
 
+    if SAY_YES_TO_EVERYTHING or TESTING_MODE:
+        if 'OK' in options:
+            return 'OK'
+        if 'YES' in options:
+            return 'YES'
+    
     queryAns = None
     window = Tk()
     window.title('Query')
@@ -453,7 +469,18 @@ for i in range(5):
 
 s_play = Button(scr, bg=BLUE1, fg=BLUE2, text='PLAY', font='aharoni 60', command=lambda: updateAnimation('board', 1), highlightbackground=BLUE1)
 
-tip = Label(setupFrame, bg = BLUE1, fg = RED, text = 'Tip: d̷͚͋ȯ̸ͅ ̸̨̍n̷͕͂o̴̬͂t̴̬͠ ̷̥͝n̷̙͐a̴͉̍ṃ̷͝e̸̥̔ ̴͓̉ÿ̵͈o̸̟͒u̶͚̅r̷̗̒ ̶̉͜p̷̻͘ļ̸͝ā̶͕y̸͠ͅë̴͚ȓ̵̫ C̵̢̨̧̧̡̻̗̩͎͇̩̠̗̫͉̬͔͕͖͈̠͖̥̙̭̝̣̱̗̜͔̙͚̜̟͇̔̽̇̽́Ŗ̷͔̳͈͗̄͑̽͂͛̓̂̈́̌̎͌̐͑͂̾̅̑̎̏͂̿́͒̏̏͋͐͛͑͑̆̂̅͝͝͝A̴̗͓̟̱̘͓̻̙̞̪͖̙̗͋͗̏̒͂̏̀̄͒̌̎̂̑̀͊̀̉̃̀̆́͆͂̀̎̄̑̂̔͒̈́͝͠͝N̸̨͍̗̹̤̳̼̯̦̗͕͙̅̊͒͊̇̒̈́̓͊͝E̸̴̴̡̢̧̢̧̡̛͉̤͓̞͙̪̫̪͖̬̻̣̰̠͚̻̗̮̲̱̫̩̼̼̟̬̪͔̜͔̘̤̼̝̰̼̥̘̗̦͖̹̱̝̰͈̜̿̆̅͆̓̆̇͗̊̓̾̑̋̈́̀͗͛̿̀̈́̇̓́̄͌̃̋̅͂̊̃͒́͒́̇͑͊̏̑̀̇͗̌͌̌́͊͗̐̂͗͛͆̀͆̎̊̉̾̍̾̑̔̍̀̽̉̈́̐́͐̅͗̕͝͝͝͝͝.', font = 'optima 10 italic')
+tip = Label(setupFrame, bg = BLUE1, fg = RED, text = 'Press ~ for testing mode\nPress \\ for "say-yes-to-everything" mode', font = 'optima 10 italic')
+
+def pressedT(a):
+    global TESTING_MODE
+    TESTING_MODE = True
+
+def pressedY(a):
+    global SAY_YES_TO_EVERYTHING
+    SAY_YES_TO_EVERYTHING = True
+
+scr.bind('<`>', pressedT)
+scr.bind('<\\>', pressedY)
 
 #################### GAME BOARD ####################
 
@@ -520,6 +547,13 @@ def displayDice(c, num):
 
 def displayRoll(d1, d2):
     global dice_screen, dice1, dice2
+    if TESTING_MODE:
+        return
+
+    dice_screen.deiconify()
+    dice_screen.lift()
+    center(dice_screen, 0, -50)
+
     speed = 25
     while speed > 1:
         dice_screen.after(int(500 / speed))
