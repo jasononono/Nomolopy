@@ -153,7 +153,7 @@ def updateWindow(location):
             players_token.append(Label(scr, bd = 2, bg = players_color[i], image = img))
 
         dialogueSpd = (100 - dialogueSlider.get()) * 50 + 1
-        movementSpd = (100 - movementSlider.get()) + 1
+        movementSpd = movementSlider.get() ** 3 / 5000 + 1
 
         title.place(anchor=CENTER, x=400, y=380)
         subtitle.place(anchor=CENTER, x=400, y=450)
@@ -214,13 +214,17 @@ def moveToken(token, start, end):
             pos = [scatter(600), scatter(200)]
         else:
             pos = [scatter(pos[rem + 1]), scatter(pos[rem])]
-
-        spd = [(pos[0] - start[0]) / movementSpd ** 2, (pos[1] - start[1]) / movementSpd ** 2]
+        
+        dist = ((pos[0] - start[0]) ** 2 + (pos[1] - start[1]) ** 2) ** 0.5
+        calc = movementSpd / dist
+        spd = [calc * (pos[0] - start[0]), calc * (pos[1] - start[1])]
         currentPos = start.copy()
-        for i in range(movementSpd ** 2):
+        
+        for i in range(int(dist / movementSpd)):
             players_token[token].place(anchor = CENTER, x = currentPos[0] + spd[0], y = currentPos[1] + spd[1])
             currentPos = [currentPos[0] + spd[0], currentPos[1] + spd[1]]
             scr.update()
+        players_token[token].place(anchor = CENTER, x = pos[0], y = pos[1])
 
     return pos
 
@@ -433,7 +437,7 @@ movementSlider = Scale(setupSpacer, from_ = 0, to = 100, orient = HORIZONTAL)
 dialogueSpd = 1000
 movementSpd = 100
 dialogueSlider.set(75)
-movementSlider.set(50)
+movementSlider.set(25)
 
 players_name = [StringVar(scr, '') for i in range(5)]
 players_label = []
