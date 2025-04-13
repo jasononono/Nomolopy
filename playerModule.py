@@ -87,7 +87,7 @@ class Player:
 
     def mortgageOrSell(self, amount):
         #UI import
-        m_win = gui.mortgagePopup()
+        m_win = gui.mortgagePopup(amount)
         if not gui.dashboardState:
             gui.openDashboard()
         while players_info[self.player_num][2] and players_info[self.player_num][1] < amount:
@@ -98,9 +98,8 @@ class Player:
         gui.updateDashboard(num=self.player_num)
         m_win.destroy()
         if players_info[self.player_num][1] >= amount:
-            return -1
-        else:
             return 1
+        return -1
 
     def spaceAction(self, space, players):
         if space == 30:
@@ -206,6 +205,7 @@ class Player:
                 for p in color_sets[color_set_index[space]]:
                     property_state[p] = 1
                 players_info[self.player_num][3].append(color_sets[color_set_index[space]])
+                gui.updateDashboard(self.player_num)
 
 
     def drawChance(self):
@@ -435,6 +435,7 @@ class Player:
     def bankrupt(self):
         global players
         gui.msg(f"{self.player_name} has been bankrupted!")
+        gui.scr.after(5000)
         for property in players_info[self.player_num][2]:
             property_state[property] = -2
             property_state[property] = -1

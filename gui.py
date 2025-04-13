@@ -368,13 +368,13 @@ def packDashboard(num, can_sell):
             sell_button = Button(b, height=1, font = 'optima 10', text="Sell", highlightthickness=0, highlightbackground=BLUE1, command=lambda x = i: sellProperty(x))
             sell_button.place(x=223, y=2)
 
-def mortgagePopup():
+def mortgagePopup(amount):
     m_scr = Tk()
     m_scr.config(bg=BLUE1)
     m_scr.geometry("350x100")
     m_scr.title("You can't pay!")
     center(m_scr)
-    Label(m_scr, text="You don't have enough to pay!\nSell some properties to continue.", font="optima 20", fg=BLUE2, bg=BLUE1).place(anchor="center", x=175, y=50)
+    Label(m_scr, text=f"You don't have enough to pay!\nYou need: ${amount}\nSell some properties to continue.", font="optima 20", fg=BLUE2, bg=BLUE1).place(anchor="center", x=175, y=50)
     m_scr.update()
     return m_scr
 
@@ -571,6 +571,7 @@ dice_screen = Tk()
 dice_screen.title("Roll the Dice")
 dice_screen.config(background=BLUE1)
 dice_screen.geometry("500x250")
+dice_screen.resizable(False, False)
 dice1 = Canvas(dice_screen, height=100, width=100, bg="white", highlightbackground=BLUE1)
 dice1.place(x=100, y=75)
 dice2 = Canvas(dice_screen, height=100, width=100, bg="white", highlightbackground=BLUE1)
