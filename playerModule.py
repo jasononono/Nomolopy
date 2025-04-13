@@ -310,7 +310,7 @@ class Player:
                     self.bankrupt()
                     return
             for i in range(len(players)):
-                if i != self.player_num:
+                if i != self.player_num and players[i]:
                     players_info[i][1] += 50
         else:
             cost, houses, hotels = self.buildingRepairs(25, 100)
@@ -390,7 +390,7 @@ class Player:
         elif draw_card == 14:
             gui.msg(f"It's {self.player_name}'s birthday! Every player pays them $10.")
             for player in players:
-                if player != self:
+                if player != self and player:
                     if players_info[player.player_num][1] >= 10:
                         players_info[player.player_num][1] -= 10
                     else:
