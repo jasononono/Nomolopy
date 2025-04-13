@@ -15,7 +15,7 @@ def setup():
         players_info[i][4] = False
 
 def turn(player):
-    if not player.loop:
+    if not player:
         return
     gui.msg(f"It is {player.player_name}'s turn.")
     if players_info[player.player_num][0] == 40:
