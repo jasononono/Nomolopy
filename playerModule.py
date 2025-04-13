@@ -93,6 +93,9 @@ class Player:
         while players_info[self.player_num][2] and players_info[self.player_num][1] < amount:
             gui.updateDashboard(num=self.player_num, can_sell=True)
             previous_money = players_info[self.player_num][1]
+
+            if gui.AUTO_SELL or gui.TESTING_MODE:
+                gui.sellProperty(players_info[self.player_num][2][0])
             while players_info[self.player_num][1] == previous_money:
                 gui.scr.update()
         gui.updateDashboard(num=self.player_num)

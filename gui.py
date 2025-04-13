@@ -14,6 +14,7 @@ from data import *
 
 TESTING_MODE = False
 SAY_YES_TO_EVERYTHING = False
+AUTO_SELL = False
 
 
 BLUE0 = '#ceddf5'
@@ -479,8 +480,13 @@ def pressedY(a):
     global SAY_YES_TO_EVERYTHING
     SAY_YES_TO_EVERYTHING = True
 
-scr.bind('<`>', pressedT)
-scr.bind('<\\>', pressedY)
+def pressedA(a):
+    global AUTO_SELL
+    AUTO_SELL = True
+
+scr.bind('<Control-t>', pressedT)
+scr.bind('<Control-y>', pressedY)
+scr.bind('<Control-a>', pressedA)
 
 #################### GAME BOARD ####################
 
