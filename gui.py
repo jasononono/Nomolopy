@@ -206,7 +206,6 @@ def updateAnimation(location, direction):
 
 def moveToken(token, start, end):
     global players_token, scr
-    
     if start is None:
         pos = [scatter(52) for _ in range(2)]
         players_token[token].place(anchor = CENTER, x = pos[0], y = pos[1])

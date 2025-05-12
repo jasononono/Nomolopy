@@ -34,11 +34,14 @@ while gui.LOCATION != 'board':
 
 setup()
 winner = None
+player1 = players[0]
+player1.bankrupt()
 while len(players) > 1:
     gui.scr.update()
     turn(players[player_turn])
     player_turn = (player_turn + 1) % len(players)
-    if players.count(None) == 4:
+    if players.count(None) == len(players)-1:
         winner = players[player_turn].player_name
         break
 gui.popup(f"{winner} won!")
+gui.scr.mainloop()
