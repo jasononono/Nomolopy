@@ -441,7 +441,7 @@ class Player:
         global players
         gui.msg(f"{self.player_name} has been bankrupted!")
         for property in players_info[self.player_num][2]:
-            property_state[property] = -2
+            property_state[property] = -1
             property_state[property] = -1
         self.loop = False
         gui.players_token[self.player_num].place_forget()
