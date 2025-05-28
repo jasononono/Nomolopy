@@ -1,4 +1,6 @@
 import random
+import sys
+
 from data import *
 import gui
 
@@ -438,9 +440,9 @@ class Player:
     def bankrupt(self):
         global players
         gui.msg(f"{self.player_name} has been bankrupted!")
-        gui.scr.after(5000)
         for property in players_info[self.player_num][2]:
-            property_state[property] = -2
+            property_state[property] = -1
             property_state[property] = -1
         self.loop = False
-        players[players.index(self)] = None
+        gui.players_token[self.player_num].place_forget()
+        players[self.player_num] = None

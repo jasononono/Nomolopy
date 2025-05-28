@@ -4,7 +4,7 @@ color_sets = ((1, 3), (6, 8, 9), (11, 13, 14), (16, 18, 19), (21, 23, 24), (26, 
 color_set_index = [0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 2, 0, 2, 2, 0, 3, 0, 3, 3, 0, 4, 0, 4, 4, 0, 5, 5, 0, 5, 0, 6, 6, 0, 6, 0, 0, 7, 0, 7]
 property_purchase_price = (0, 60, 0, 60, 0, 200, 100, 0, 100, 120, 0, 140, 150, 140, 160, 200, 180, 0, 180, 200, 0, 220, 0, 220, 240, 200, 260, 260, 150, 280, 0, 300, 300, 0, 320, 200, 0, 350, 0, 400)
 #-2 = not owned, -1 = mortgaged, 0 = owned, 1 = color set, >1 = has houses
-property_state = [-2]*40
+property_state = [-1]*40
 # -1 = unowned, otherwise player index
 property_owner = [-1]*40
 #position, money, properties, sets, jailcard

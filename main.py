@@ -37,7 +37,7 @@ while len(players) > 1:
     gui.scr.update()
     turn(players[player_turn])
     player_turn = (player_turn + 1) % len(players)
-    if len(players) == 1:
+    if players.count(None) == len(players)-1:
         winner = players[player_turn].player_name
         break
 gui.popup(f"{winner} won!")

@@ -206,7 +206,6 @@ def updateAnimation(location, direction):
 
 def moveToken(token, start, end):
     global players_token, scr
-    
     if start is None:
         pos = [scatter(52) for _ in range(2)]
         players_token[token].place(anchor = CENTER, x = pos[0], y = pos[1])
@@ -383,7 +382,7 @@ def sellProperty(property):
     if property_state[property] == 0:
         players_info[property_owner[property]][1] += property_purchase_price[property]
         players_info[property_owner[property]][2].remove(property)
-        property_state[property] = -2
+        property_state[property] = -1
         property_owner[property] = -1
     else:
         if property < 10:
