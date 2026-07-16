@@ -127,13 +127,13 @@ class Player:
         elif space == 38:
             if players_info[self.player_num][1] >= 100:
                 players_info[self.player_num][1] -= 100
-                gui.msg(f"{self.player_name} paid $200.")
+                gui.msg(f"{self.player_name} paid $100.")
             else:
                 if self.mortgageOrSell(100) == -1:
                     self.bankrupt()
                 else:
                     players_info[self.player_num][1] -= 100
-                    gui.msg(f"{self.player_name} paid $200.")
+                    gui.msg(f"{self.player_name} paid $100.")
         elif space in null_space or space in players_info[self.player_num][2]:
             pass
         elif space == 40:
